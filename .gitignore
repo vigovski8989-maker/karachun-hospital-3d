@@ -1,0 +1,48 @@
+# Dependencies and caches
+node_modules/
+.npm/
+.cache/
+**/.gradle/
+**/build/
+*.log
+
+# Android local config and signing material
+local.properties
+*.jks
+*.keystore
+*.p12
+*.pem
+key.properties
+google-services.json
+
+# Secrets
+.env
+.env.*
+
+# Built packages (attach binaries to GitHub Releases, not to git)
+dist/
+*.apk
+*.aab
+*.ap_
+*.7z
+*.zip
+
+# QA dumps, captures, editor backups
+**/review/
+**/.qa/
+**/.qa-cache/
+screenshots/
+**/screenshots/
+*.blend1
+*.bak
+*.phase2bak
+
+# Generated Capacitor web copy
+packaging/trial45/www/
+
+# IDE / OS
+.idea/
+*.iml
+.vscode/
+.DS_Store
+Thumbs.db

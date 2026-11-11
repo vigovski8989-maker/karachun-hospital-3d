@@ -1,0 +1,10 @@
+const pp=require('puppeteer-core');const fs=require('fs');
+const src=fs.readFileSync(__dirname+'/../smoke.test.js','utf8');const PLAN=eval(src.match(/const PLAN=(\[.*\]);/)[1]);
+const BOT=src.slice(src.indexOf('window.__PLAN=PLAN;'),src.indexOf("return out},PLAN);"));
+(async()=>{const b=await pp.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const p=await b.newPage();
+await p.setViewport({width:412,height:915,deviceScaleFactor:2,isMobile:true,hasTouch:true});
+await p.goto('http://localhost:8090/',{waitUntil:'networkidle0'});await p.evaluate(()=>localStorage.clear());
+await p.evaluate(()=>{closeModal();newGame(4);closeModal();S.money=400000});
+await p.evaluate(new Function('PLAN',BOT+'window.botBuild=botBuild;return out'),PLAN);
+const r=await p.evaluate(()=>{for(let d=0;d<400;d++){botBuild();for(let i=0;i<160;i++){update(.05);const q=S.pats.find(p=>p.state==='treat'&&p.vs&&p.vs.ph==='sat'&&(S.rooms.find(r=>r.id===p.room)||{}).type==='derma');if(q){closeModal();setSpeed(0);cam.z=2.4;const c=iso(q.x,q.y);cam.x=c.x-innerWidth/2/cam.z;cam.y=c.y-innerHeight/2/cam.z;return 'found '+S.day}}closeModal()}return 'none'});
+console.log(r);await new Promise(r=>setTimeout(r,800));await p.screenshot({path:'screenshots/v11_derma_lie.png'});await b.close()})();

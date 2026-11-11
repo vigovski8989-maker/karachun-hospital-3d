@@ -1,0 +1,33 @@
+"""Каталог персонажей: параметры внешности и черт болезней (общий скелет)."""
+S=dict
+STAFF=[
+ S(id='doctor',role='doctor',skin='#e8b48c',hair='#2b1b0e',hs='short',top='#f4f4f4',coat=True,pants='#454d57',shoes='#1b1b1b',tie='#2c5aa0',steth=True,sleeve='long'),
+ S(id='nurse',role='nurse',skin='#f0c2a0',hair='#6b3a1e',hs='bun',top='#e86fa4',pants='#e86fa4',shoes='#f4f4f4',cap='#f6f6f6',sleeve='short'),
+ S(id='handyman',role='handyman',skin='#d9a36e',hair='#2a1a10',hs='short',top='#2f55a8',pants='#2f55a8',shoes='#6b4a2a',cap='#2f55a8',belt=True,sleeve='long',overall=True),
+ S(id='orderly',role='orderly',skin='#c99a74',hair='#3a2416',hs='short',top='#5fae8c',pants='#5fae8c',shoes='#e8e8e8',cap='#5fae8c',sleeve='short',build=1.08),
+ S(id='receptionist',role='receptionist',skin='#eec3a2',hair='#4a2a14',hs='bun',top='#e0a828',pants='#2a2a2e',shoes='#222',sleeve='long'),
+]
+PAT=[
+ S(id='balloon',skin='#f0c8a0',hair='#2a2a2a',hs='none',top='#3b3f4c',hood=True,pants='#35538a',shoes='#a0653a',bigHead=2.3,sleeve='long'),
+ S(id='patches',skin='#cfdc9a',hair='#5b2e1a',hs='bun',top='#6f8a3a',pants='#35538a',shoes='#c9c9c9',patches=True,sleeve='long',build=1.08,inner='#a8a8a8'),
+ S(id='rednose',skin='#e2b58e',hair='#241810',hs='short',top='#7a4a28',pants='#35538a',shoes='#303030',redNose=True,sleeve='long',inner='#8a8d92',hood=True),
+ S(id='bigfeet',skin='#f0c0a0',hair='#8a3a1e',hs='bun',top='#c47c86',pants='#6a6a74',shoes=None,bigFeet=True,sleeve='long',hood=True,shorts=True),
+ S(id='phone',skin='#e8b890',hair='#2a1a10',hs='short',top='#2f5da0',pants='#2b4a82',shoes='#d8d8d8',phone=True,sleeve='long',hood=True),
+ S(id='knees',skin='#e0aa80',hair='#2e1d12',hs='curly',top='#4d8a47',pants='#b59a68',shoes='#7a4a28',bounce=True,sleeve='short'),
+ S(id='arcs',skin='#ecc8b0',hair='#cfcfd4',hs='bun',top='#8d6fb4',skirt='#4a3260',pants='#4a3260',shoes='#1d1d1d',arcs=True,glasses=True,sleeve='long',build=1.0),
+ S(id='robot',skin='#e8b890',hair='#2a2a2a',hs='none',top='#3d5a96',plaid=True,pants='#b59a68',shoes='#7a4a28',robot=True,sleeve='long'),
+ S(id='yawn',skin='#e2b48c',hair='#3a2416',hs='short',top='#8da0c0',stripes=True,pants='#8da0c0',shoes='#8da0c0',yawn=True,sleeve='long',slipper=True),
+ S(id='grumpy',skin='#e8b894',hair='#6b3a1e',hs='bun',top='#e2c9a0',pants='#35538a',shoes='#d8d0c0',belly=True,angry=True,sleeve='short',build=1.15),
+ S(id='bluenose',skin='#dcb08c',hair='#241810',hs='short',top='#7a4a28',pants='#2b4a82',shoes='#2a2a2a',blueNose=True,sleeve='long',inner='#8a8d92',hood=True),
+ S(id='laugh',skin='#ecc0a0',hair='#8a4a24',hs='bun',top='#d9a526',skirt='#d9a526',pants='#d9a526',shoes='#7a4a28',laugh=True,hunch=True,sleeve='long',build=1.1),
+ S(id='glow',skin='#b8ff6a',hair='#2a3a10',hs='short',top='#3a3a46',pants='#35538a',shoes='#303030',glow=True,sleeve='long'),
+ S(id='spotty',skin='#f2c8a8',hair='#c86a28',hs='bun',top='#f0e6c8',pants='#6a6a74',shoes='#7a4a28',spots=True,sleeve='short'),
+ S(id='zebra',skin='#f0f0f0',hair='#111111',hs='short',top='#151515',pants='#151515',shoes='#111',stripes=True,sleeve='long'),
+ S(id='tail',skin='#e2b48c',hair='#5a3a1a',hs='curly',top='#a04040',pants='#3a3a46',shoes='#2a2a2a',tail=True,sleeve='short'),
+ S(id='flat',skin='#e8b890',hair='#2a1a10',hs='none',top='#4a7ab0',pants='#b59a68',shoes='#7a4a28',flatHead=True,sleeve='long'),
+ S(id='deflated',skin='#e6d0c0',hair='#8a8a8a',hs='bun',top='#b0a0c8',pants='#6a6a74',shoes='#d8d8d8',build=.78,sleeve='long',skirt='#6a5a88'),
+ S(id='static',skin='#ecc0a0',hair='#ffe040',hs='none',top='#40a0a0',pants='#2b4a82',shoes='#1d1d1d',spiky=True,sleeve='short'),
+ S(id='battery',skin='#d8b090',hair='#241810',hs='short',top='#5a6a3a',pants='#3a3a3a',shoes='#2a2a2a',battery=True,sleeve='long',build=1.05),
+ S(id='bsod',skin='#e8b890',hair='#2a2a2a',hs='short',top='#2a2a3a',pants='#35538a',shoes='#d8d8d8',bsod=True,sleeve='long',hood=True),
+ S(id='loop',skin='#f0c8a8',hair='#3a2416',hs='bun',top='#e08a3a',pants='#4a3a2a',shoes='#7a4a28',loop=True,sleeve='long'),
+]

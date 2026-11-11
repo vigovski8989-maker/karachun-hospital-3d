@@ -1,0 +1,28 @@
+{
+ "bench": {
+  "name": "Скамейка",
+  "cost": 150,
+  "comfort": 2,
+  "seat": true
+ },
+ "plant": {
+  "name": "Растение",
+  "cost": 100,
+  "comfort": 1
+ },
+ "radiator": {
+  "name": "Батарея",
+  "cost": 120,
+  "warm": 1
+ },
+ "bin": {
+  "name": "Урна",
+  "cost": 60,
+  "clean": 1
+ },
+ "soda": {
+  "name": "Автомат с газировкой",
+  "cost": 400,
+  "income": 15
+ }
+}

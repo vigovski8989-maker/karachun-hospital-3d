@@ -1,0 +1,27 @@
+{
+ "doctor": {
+  "name": "Врач",
+  "base": 900,
+  "color": "#ffffff"
+ },
+ "nurse": {
+  "name": "Медсестра",
+  "base": 600,
+  "color": "#ff9ccb"
+ },
+ "handyman": {
+  "name": "Завхоз",
+  "base": 400,
+  "color": "#4f86ff"
+ },
+ "receptionist": {
+  "name": "Регистратор",
+  "base": 350,
+  "color": "#ffd24a"
+ },
+ "orderly": {
+  "name": "Санитар",
+  "base": 450,
+  "color": "#5fae8c"
+ }
+}

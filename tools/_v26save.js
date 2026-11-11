@@ -1,0 +1,12 @@
+const pp=require('puppeteer-core');const fs=require('fs');
+const src=fs.readFileSync(__dirname+'/../smoke.test.js','utf8');const PLAN=eval(src.match(/const PLAN=(\[.*\]);/)[1]);
+const BOT=src.slice(src.indexOf('window.__PLAN=PLAN;'),src.indexOf("return out},PLAN);"));
+(async()=>{const b=await pp.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox']});const p=await b.newPage();const errs=[];p.on('pageerror',e=>errs.push(e.message));
+await p.goto('http://localhost:8099/',{waitUntil:'networkidle0'});
+await p.evaluate(()=>{closeModal();newGame(3);closeModal();S.money=200000});await p.evaluate(new Function('PLAN',BOT+'window.botBuild=botBuild;return out'),PLAN);
+const sv=await p.evaluate(()=>{for(let i=0;i<4000;i++){update(.05);if(i%200==0&&window.botBuild)try{botBuild()}catch(e){}}save(true);const k=Object.keys(localStorage);return k.map(x=>[x,localStorage.getItem(x)])});
+const gp=await p.evaluate(()=>S.rooms.filter(r=>r.type==='gp').map(r=>r.sp.staff.seat));
+await p.goto('http://localhost:8098/',{waitUntil:'networkidle0'});
+await p.evaluate((sv)=>{for(const[k,v]of sv)localStorage.setItem(k,v);closeModal();window._ok=load(3);closeModal()},sv);await new Promise(r=>setTimeout(r,2500));const r=await p.evaluate((sv)=>{const ok=window._ok;const c0=S.cured;for(let i=0;i<3000;i++)update(.05);
+ return{ok,rooms:S.rooms.length,pats:S.pats.length,cured:[c0,S.cured],gp:S.rooms.filter(r=>r.type==='gp').map(r=>[r.sp.staff.seat,r._v26ok,(S.staff.find(s=>s.room===r.id)||{}).state])}},sv);
+console.log(JSON.stringify({gpBefore:gp,after:r,errs}));await b.close()})();

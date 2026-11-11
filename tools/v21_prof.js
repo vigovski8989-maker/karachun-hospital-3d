@@ -1,0 +1,19 @@
+// v21: профиль кадра (CDP Profiler) + время кадра при CPU 4x, 360x800 DPR2. env: Q, LV(0-based), TAG
+const pp=require('puppeteer-core');const fs=require('fs');const URL=process.env.URL||'http://localhost:8095/',Q=process.env.Q||'medium',LV=+(process.env.LV||0),THR=+(process.env.THR||4);
+const seed=`(()=>{let s=12345;Math.random=()=>{s=(s*1103515245+12345)&0x7fffffff;return s/0x7fffffff}})();`;
+const src=fs.readFileSync(__dirname+'/../smoke.test.js','utf8');const PLAN=eval(src.match(/const PLAN=(\[.*\]);/)[1]);const BOT=src.slice(src.indexOf('window.__PLAN=PLAN;'),src.indexOf("return out},PLAN);"));
+(async()=>{const b=await pp.launch({executablePath:'/usr/bin/google-chrome',args:['--no-sandbox','--enable-gpu-rasterization','--ignore-gpu-blocklist']});
+ const p=await b.newPage();await p.setViewport({width:360,height:800,deviceScaleFactor:2,isMobile:true,hasTouch:true});const errs=[];p.on('pageerror',e=>errs.push(e.message));await p.evaluateOnNewDocument(seed);
+ await p.goto(URL,{waitUntil:'networkidle0'});await p.evaluate(q=>{localStorage.clear();localStorage.setItem('karachun_gfx',q)},Q);await p.reload({waitUntil:'networkidle0'});
+ if(process.env.DBG)console.log(errs,await p.evaluate(()=>typeof closeModal+document.scripts.length+location.href));await p.evaluate(lv=>{closeModal();newGame(lv);closeModal()},LV);
+ await p.evaluate(new Function('PLAN',BOT+'window.botBuild=botBuild;botBuild();hire("handyman",0);return out'),PLAN);
+ await p.evaluate(()=>{for(let d=0;d<60&&!S.won;){for(let i=0;i<40;i++)update(.05);if(S.day!==S._ld){S._ld=S.day;d++;try{botBuild()}catch(e){}closeModal();hidePanel()}}closeModal();hidePanel();setSpeed(1);const q=iso(S.w/2,S.h/2);cam.z=1.6;cam.x=q.x-innerWidth/2/cam.z;cam.y=q.y-innerHeight/2/cam.z});
+ const cdp=await p.target().createCDPSession();await cdp.send('Emulation.setCPUThrottlingRate',{rate:THR});
+ await new Promise(r=>setTimeout(r,1500));
+ await cdp.send('Profiler.enable');await cdp.send('Profiler.setSamplingInterval',{interval:200});await cdp.send('Profiler.start');
+ const r=await p.evaluate(()=>new Promise(res=>{let ts=[],t0=0;function f(t){if(!t0)t0=t;ts.push(t);if(t-t0<8000)requestAnimationFrame(f);else{const d=[];for(let i=1;i<ts.length;i++)d.push(ts[i]-ts[i-1]);const s=[...d].sort((a,b)=>a-b);res({fps:+(d.length/((t-t0)/1000)).toFixed(1),p50:+s[s.length>>1].toFixed(1),p95:+s[Math.floor(s.length*.95)].toFixed(1),p99:+s[Math.floor(s.length*.99)].toFixed(1),max:+s[s.length-1].toFixed(1),over33:d.filter(x=>x>33.4).length,n:d.length,pats:S.pats.length,staff:S.staff.length,rooms:S.rooms.length,cw:cv.width,gq:(typeof GFX!=='undefined'?GFX.q:''),z:cam.z})}}requestAnimationFrame(f)}));
+ const {profile}=await cdp.send('Profiler.stop');
+ const self={};const byId={};for(const n of profile.nodes)byId[n.id]=n;const dt={};for(let i=0;i<profile.samples.length;i++){dt[profile.samples[i]]=(dt[profile.samples[i]]||0)+(profile.timeDeltas[i]||0)}
+ let tot=0;for(const n of profile.nodes){const k=(n.callFrame.functionName||'(anon)')+' '+n.callFrame.url.split('/').pop()+':'+n.callFrame.lineNumber;self[k]=(self[k]||0)+(dt[n.id]||0);tot+=dt[n.id]||0}
+ const top=Object.entries(self).sort((a,b)=>b[1]-a[1]).slice(0,25).map(([k,v])=>[k,(v/tot*100).toFixed(1)+'%']);
+ console.log(JSON.stringify({Q,LV,THR,r,errs},null,0));console.log(top.map(x=>x.join('  ')).join('\n'));await b.close()})();

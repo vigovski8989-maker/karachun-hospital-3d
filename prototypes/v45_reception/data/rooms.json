@@ -1,0 +1,1100 @@
+{
+  "reception": {
+    "name": "Регистратура",
+    "cost": 1500,
+    "min": [
+      5,
+      3
+    ],
+    "staff": "receptionist",
+    "color": "#dceaf5",
+    "desc": "Здесь пациентов регистрируют. Нужен регистратор.",
+    "layout": {
+      "items": [
+        {
+          "k": "recdesk",
+          "c": 0,
+          "r": 1
+        },
+        {
+          "k": "chair_office",
+          "c": 0,
+          "r": 0,
+          "soft": true,
+          "dir": 1
+        },
+        {
+          "k": "plant",
+          "c": 4,
+          "r": 0,
+          "soft": true
+        },
+        {
+          "k": "cabinet",
+          "c": 4,
+          "r": 1
+        },
+        {
+          "k": "noticeboard",
+          "c": 3,
+          "r": 0,
+          "soft": true,
+          "dir": 1
+        },
+        {
+          "k": "plant",
+          "c": 4,
+          "r": 2,
+          "soft": true
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 0,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "chair"
+        },
+        "patient": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "gp": {
+    "name": "Кабинет терапевта",
+    "cost": 2500,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#d8f5d0",
+    "desc": "Первичный осмотр и постановка диагноза.",
+    "layout": {
+      "items": [
+        {
+          "k": "desk",
+          "c": 1,
+          "r": 1
+        },
+        {
+          "k": "chair_office",
+          "c": 1,
+          "r": 0,
+          "soft": true,
+          "dir": 1
+        },
+        {
+          "k": "cabinet",
+          "c": 3,
+          "r": 0
+        },
+        {
+          "k": "chair_plain",
+          "c": 1,
+          "r": 2,
+          "soft": true,
+          "dir": 3
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "chair"
+        },
+        "patient": {
+          "c": 1,
+          "r": 2,
+          "pose": "sit",
+          "dir": 3,
+          "seat": "chair"
+        }
+      }
+    }
+  },
+  "diag": {
+    "name": "Сканер-кабинет",
+    "cost": 5000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "doctor",
+    "color": "#f3e1ff",
+    "diag": 0.35,
+    "desc": "Повышает уверенность в диагнозе.",
+    "layout": {
+      "items": [
+        {
+          "k": "scanner",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "plant",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "stand",
+          "dir": 3
+        },
+        "staff": {
+          "c": 2,
+          "r": 1,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "lab": {
+    "name": "Анализная",
+    "cost": 3000,
+    "min": [
+      3,
+      3
+    ],
+    "staff": "nurse",
+    "color": "#fff2c4",
+    "diag": 0.2,
+    "desc": "Медсестра берёт анализы. Немного помогает диагнозу.",
+    "layout": {
+      "items": [
+        {
+          "k": "tubes",
+          "c": 0,
+          "r": 1
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 0,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        },
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "stand",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "pharmacy": {
+    "name": "Аптека",
+    "cost": 2000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "nurse",
+    "color": "#ffe0e0",
+    "desc": "Лечение таблетками и сиропами.",
+    "layout": {
+      "items": [
+        {
+          "k": "recdesk",
+          "c": 0,
+          "r": 1
+        },
+        {
+          "k": "shelf",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 0,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        },
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "stand",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "ward": {
+    "name": "Палата",
+    "cost": 4000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "nurse",
+    "color": "#e0fff7",
+    "desc": "Наблюдение и восстановление.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "bed",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        },
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "psych": {
+    "name": "Кабинет разговоров",
+    "cost": 3500,
+    "min": [
+      3,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#ffe8cc",
+    "desc": "Лечит болезни головы беседой.",
+    "layout": {
+      "items": [
+        {
+          "k": "sofa",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "plant",
+          "c": 2,
+          "r": 0
+        },
+        {
+          "k": "chair_plain",
+          "c": 0,
+          "r": 2,
+          "soft": true,
+          "dir": 3
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "sofa",
+          "onItem": true
+        },
+        "staff": {
+          "c": 0,
+          "r": 2,
+          "pose": "sit",
+          "dir": 3,
+          "seat": "chair"
+        }
+      }
+    }
+  },
+  "pump": {
+    "name": "Сдувательная",
+    "cost": 7000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#d6f0ff",
+    "machine": true,
+    "desc": "Машина для лечения раздутых недугов. Изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "pumpmachine",
+          "c": 0,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        },
+        "staff": {
+          "c": 1,
+          "r": 1,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "toilet": {
+    "name": "Туалет",
+    "cost": 1200,
+    "min": [
+      3,
+      3
+    ],
+    "staff": null,
+    "color": "#e6e6e6",
+    "desc": "Повышает комфорт пациентов.",
+    "layout": {
+      "items": [
+        {
+          "k": "wc",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "sink",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 0,
+          "pose": "wc",
+          "dir": 1,
+          "seat": "wc",
+          "onItem": true
+        },
+        "wash": {
+          "c": 2,
+          "r": 1,
+          "pose": "wash",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "staffroom": {
+    "name": "Комната отдыха",
+    "cost": 2000,
+    "min": [
+      3,
+      3
+    ],
+    "staff": null,
+    "color": "#f0e6d8",
+    "desc": "Персонал отдыхает здесь и меньше устаёт.",
+    "layout": {
+      "items": [
+        {
+          "k": "sofa",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "coffee",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "rest1": {
+          "c": 0,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "sofa",
+          "onItem": true
+        },
+        "rest2": {
+          "c": 1,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "sofa",
+          "onItem": true
+        }
+      }
+    }
+  },
+  "cardio": {
+    "name": "Кардиокабинет",
+    "cost": 8000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "doctor",
+    "color": "#ffd9e6",
+    "machine": true,
+    "desc": "Лечит капризные сердца. Аппарат изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "scanner",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        },
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "surgery": {
+    "name": "Малая операционная",
+    "cost": 11000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "doctor",
+    "color": "#d9fff0",
+    "desc": "Несложные операции. Нужен опытный врач.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "cabinet",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        },
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "icu": {
+    "name": "Реанимация",
+    "cost": 9000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "nurse",
+    "color": "#e6f7ff",
+    "passive": true,
+    "desc": "Улучшенная палата: пока работает, пациенты слабеют на 35% медленнее, а половину неудач лечения удаётся спасти.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "bed",
+          "c": 2,
+          "r": 0
+        },
+        {
+          "k": "shelf",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        },
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        }
+      }
+    }
+  },
+  "xray": {
+    "name": "Рентген",
+    "cost": 6000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#e0e8f0",
+    "diag": 0.45,
+    "machine": true,
+    "desc": "Просвечивает пациента насквозь — сильная диагностика. Изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "xray",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "plant",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 1,
+          "r": 0,
+          "pose": "stand",
+          "dir": 2
+        },
+        "staff": {
+          "c": 2,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "genetics": {
+    "name": "Генетика",
+    "cost": 9000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#f6e0ff",
+    "desc": "ДНК-секвенатор переписывает лишние полоски и хвосты.",
+    "layout": {
+      "items": [
+        {
+          "k": "dnaseq",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "cabinet",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        },
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "electro": {
+    "name": "Электротерапия",
+    "cost": 9000,
+    "min": [
+      3,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#fff6c8",
+    "machine": true,
+    "desc": "Кресло с катушкой: снимает статику и подзаряжает. Изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "elchair",
+          "c": 0,
+          "r": 0,
+          "soft": true
+        },
+        {
+          "k": "plant",
+          "c": 2,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "chair",
+          "onItem": true
+        },
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "reboot": {
+    "name": "Перезагрузочная",
+    "cost": 10000,
+    "min": [
+      3,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#d8f0ff",
+    "machine": true,
+    "desc": "Капсула перезагрузки головы: выключить и включить. Изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "rebootpod",
+          "c": 0,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        },
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "inflate": {
+    "name": "Надувательная",
+    "cost": 8000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#ffe4dc",
+    "machine": true,
+    "desc": "Компрессор возвращает голове и телу правильный объём. Изнашивается.",
+    "layout": {
+      "items": [
+        {
+          "k": "inflator",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "cabinet",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        },
+        "staff": {
+          "c": 1,
+          "r": 1,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "derma": {
+    "name": "Дерматология",
+    "cost": 6000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "nurse",
+    "color": "#f0e0ff",
+    "desc": "Ультрафиолет под лампой лечит светящуюся и пятнистую кожу.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "uvlamp",
+          "c": 1,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        },
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "research": {
+    "name": "Лаборатория исследований",
+    "cost": 7000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#e8fff0",
+    "desc": "Врач-исследователь копит очки и открывает новые кабинеты.",
+    "layout": {
+      "items": [
+        {
+          "k": "labbench",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "shelf",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 0,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "morgue": {
+    "name": "Морг",
+    "cost": 5000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "orderly",
+    "color": "#dfeef5",
+    "desc": "Санитар увозит умерших на каталке (штраф к репутации −7 вместо −15). 6 ячеек. Согласные доноры дают органы для трансплантации.",
+    "layout": {
+      "items": [
+        {
+          "k": "morguefridge",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "cabinet",
+          "c": 3,
+          "r": 0
+        },
+        {
+          "k": "autopsy",
+          "c": 1,
+          "r": 2
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 0,
+          "r": 3,
+          "pose": "stand",
+          "face": "patient"
+        },
+        "patient": {
+          "c": 1,
+          "r": 3,
+          "pose": "lie",
+          "at": {
+            "c": 1,
+            "r": 2
+          }
+        }
+      }
+    }
+  },
+  "transplant": {
+    "name": "Трансплантология",
+    "cost": 14000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": "doctor",
+    "color": "#dcfff4",
+    "desc": "Пересадка органов из морга или банка органов. Нужен хирург (навык ≥60), успех зависит от совместимости органа.",
+    "layout": {
+      "items": [
+        {
+          "k": "bed",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "cabinet",
+          "c": 2,
+          "r": 0
+        },
+        {
+          "k": "organfridge",
+          "c": 3,
+          "r": 0
+        }
+      ],
+      "spots": {
+        "patient": {
+          "c": 0,
+          "r": 2,
+          "pose": "lie",
+          "at": {
+            "c": 0,
+            "r": 0
+          }
+        },
+        "staff": {
+          "c": 1,
+          "r": 2,
+          "pose": "stand",
+          "face": "patient"
+        }
+      }
+    }
+  },
+  "library": {
+    "name": "Библиотека",
+    "cost": 3000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": null,
+    "color": "#efe2c8",
+    "desc": "Свободный персонал читает здесь и повышает навык; отдыхающие в комнате отдыха тоже учатся быстрее. Только одна на больницу.",
+    "layout": {
+      "items": [
+        {
+          "k": "bookcase",
+          "c": 0,
+          "r": 0
+        },
+        {
+          "k": "bookcase",
+          "c": 2,
+          "r": 0
+        },
+        {
+          "k": "readdesk",
+          "c": 0,
+          "r": 2
+        },
+        {
+          "k": "chair_plain",
+          "c": 1,
+          "r": 2,
+          "soft": true,
+          "dir": 2
+        }
+      ],
+      "spots": {
+        "read1": {
+          "c": 1,
+          "r": 2,
+          "pose": "sit",
+          "dir": 2,
+          "seat": "chair"
+        },
+        "read2": {
+          "c": 2,
+          "r": 1,
+          "pose": "stand",
+          "dir": 3
+        }
+      }
+    }
+  },
+  "chief": {
+    "name": "Кабинет главврача",
+    "cost": 6000,
+    "min": [
+      4,
+      4
+    ],
+    "staff": null,
+    "color": "#e8dcc8",
+    "desc": "Назначьте главврача (врач или медсестра): персонал меньше устаёт, быстрее учится, экономия на зарплатах, быстрее исследования. Только один на больницу.",
+    "layout": {
+      "items": [
+        {
+          "k": "chair_office",
+          "c": 1,
+          "r": 0,
+          "soft": true,
+          "dir": 1
+        },
+        {
+          "k": "chiefdesk",
+          "c": 0,
+          "r": 1
+        },
+        {
+          "k": "aquarium",
+          "c": 3,
+          "r": 0
+        },
+        {
+          "k": "plant",
+          "c": 3,
+          "r": 3
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "chair"
+        }
+      }
+    }
+  },
+  "paygp": {
+    "name": "Платный терапевт",
+    "cost": 7000,
+    "min": [
+      4,
+      3
+    ],
+    "staff": "doctor",
+    "color": "#d8ecf5",
+    "desc": "Премиальный приём за $300: точнее диагноз, выше шанс излечения, привлекает состоятельных пациентов (💎). Сюда переводится самый опытный врач.",
+    "layout": {
+      "items": [
+        {
+          "k": "chair_office",
+          "c": 1,
+          "r": 0,
+          "soft": true,
+          "dir": 1
+        },
+        {
+          "k": "chiefdesk",
+          "c": 0,
+          "r": 1
+        },
+        {
+          "k": "aquarium",
+          "c": 3,
+          "r": 0
+        },
+        {
+          "k": "chair_plain",
+          "c": 1,
+          "r": 2,
+          "soft": true,
+          "dir": 3
+        }
+      ],
+      "spots": {
+        "staff": {
+          "c": 1,
+          "r": 0,
+          "pose": "sit",
+          "dir": 1,
+          "seat": "chair"
+        },
+        "patient": {
+          "c": 1,
+          "r": 2,
+          "pose": "sit",
+          "dir": 3,
+          "seat": "chair"
+        }
+      }
+    }
+  }
+}

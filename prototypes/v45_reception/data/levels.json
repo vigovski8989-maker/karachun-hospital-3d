@@ -1,0 +1,1266 @@
+[
+ {
+  "id": 1,
+  "name": "Городок Тихие Пруды",
+  "w": 40,
+  "h": 28,
+  "money": 40000,
+  "loan": 0,
+  "rep": 500,
+  "spawnEvery": 12,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "squareeyes",
+   "balloonhead",
+   "blinknose",
+   "grumpliver"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom"
+  ],
+  "goals": {
+   "cured": 90,
+   "money": 50000,
+   "rep": 650
+  },
+  "lose": {
+   "money": -15000,
+   "deaths": 8,
+   "rep": 100
+  },
+  "intro": "Добро пожаловать, главврач! Постройте регистратуру, кабинет терапевта и аптеку, наймите персонал. Цель: вылечить 90 пациентов, иметь $50 000 и репутацию 650.",
+  "decay": 1,
+  "risk": 0,
+  "wage": 1,
+  "failDeath": 0.15
+ },
+ {
+  "id": 2,
+  "name": "Сонные Холмы",
+  "w": 36,
+  "h": 30,
+  "holes": [
+   [
+    22,
+    0,
+    14,
+    11
+   ]
+  ],
+  "money": 60000,
+  "rep": 500,
+  "spawnEvery": 14,
+  "decay": 1.5,
+  "risk": 0.05,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "squareeyes",
+   "balloonhead",
+   "blinknose",
+   "grumpliver",
+   "drumheart",
+   "soapsneeze",
+   "rubberknee",
+   "echo"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "library"
+  ],
+  "goals": {
+   "cured": 60,
+   "money": 90000,
+   "rep": 700
+  },
+  "lose": {
+   "money": -20000,
+   "deaths": 12,
+   "rep": 120
+  },
+  "intro": "Город побольше, а участок — Г-образный. Появились болезни сердца: постройте кардиокабинет. Цель: вылечить 60 пациентов, накопить $90 000 и репутацию 700.",
+  "failDeath": 0.35
+ },
+ {
+  "id": 3,
+  "name": "Бульбашки-на-Волне",
+  "w": 44,
+  "h": 32,
+  "holes": [
+   [
+    0,
+    0,
+    12,
+    12
+   ],
+   [
+    32,
+    20,
+    12,
+    12
+   ]
+  ],
+  "money": 80000,
+  "rep": 450,
+  "spawnEvery": 11,
+  "decay": 2.2,
+  "risk": 0.09,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "squareeyes",
+   "balloonhead",
+   "blinknose",
+   "grumpliver",
+   "drumheart",
+   "soapsneeze",
+   "rubberknee",
+   "echo",
+   "jellyspine",
+   "lostshadow",
+   "puffytoes",
+   "selfiesyndrome",
+   "fizzyblood"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "library",
+   "chief"
+  ],
+  "goals": {
+   "cured": 90,
+   "money": 130000,
+   "rep": 720
+  },
+  "lose": {
+   "money": -25000,
+   "deaths": 20,
+   "rep": 150
+  },
+  "intro": "Участок с двумя пустырями. Пациенты слабеют быстрее, а лечение уже не всегда успешно. Постройте операционную и реанимацию. Цель: 90 вылеченных, $130 000, репутация 720.",
+  "failDeath": 0.45
+ },
+ {
+  "id": 4,
+  "name": "Весёлый Город",
+  "w": 48,
+  "h": 34,
+  "holes": [
+   [
+    0,
+    0,
+    10,
+    10
+   ],
+   [
+    38,
+    0,
+    10,
+    10
+   ],
+   [
+    19,
+    12,
+    10,
+    6
+   ]
+  ],
+  "money": 100000,
+  "rep": 450,
+  "spawnEvery": 10,
+  "decay": 2.3,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "library",
+   "chief"
+  ],
+  "goals": {
+   "cured": 120,
+   "money": 180000,
+   "rep": 750
+  },
+  "lose": {
+   "money": -30000,
+   "deaths": 26,
+   "rep": 150
+  },
+  "intro": "Большой город, все болезни сразу и пациенты, которые не станут ждать. Держите реанимацию наготове. Цель: 120 вылеченных, $180 000, репутация 750.",
+  "failDeath": 0.4
+ },
+ {
+  "id": 5,
+  "name": "Научный городок",
+  "w": 52,
+  "h": 36,
+  "holes": [
+   [
+    21,
+    15,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    42,
+    0,
+    10,
+    8,
+    8000
+   ],
+   [
+    0,
+    28,
+    10,
+    8,
+    8000
+   ],
+   [
+    42,
+    28,
+    10,
+    8,
+    12000
+   ]
+  ],
+  "money": 110000,
+  "rep": 450,
+  "spawnEvery": 10.0,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "morgue",
+   "library",
+   "chief"
+  ],
+  "locked": {
+   "genetics": 300
+  },
+  "goals": {
+   "cured": 130,
+   "money": 220000,
+   "rep": 650,
+   "value": 310000
+  },
+  "lose": {
+   "money": -40000,
+   "deaths": 30,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "intro": "Научный городок. Новое: «Зебровидная полосатость», «Внезапная хвостатость», «Горошковая сыпь», «Светлячковая кожа». Исследуйте закрытые кабинеты в лаборатории, докупайте участки. Цель: 130 вылеченных  $220 000  репутация 650  стоимость больницы $310 000."
+ },
+ {
+  "id": 6,
+  "name": "Скорая помощь",
+  "w": 54,
+  "h": 38,
+  "holes": [
+   [
+    22,
+    16,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    44,
+    0,
+    10,
+    8,
+    10000
+   ],
+   [
+    0,
+    30,
+    10,
+    8,
+    10000
+   ],
+   [
+    44,
+    30,
+    10,
+    8,
+    14000
+   ]
+  ],
+  "money": 100000,
+  "rep": 450,
+  "spawnEvery": 9.75,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "lazyheart",
+   "wanderliver"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "inflate": 250,
+   "transplant": 350
+  },
+  "goals": {
+   "cured": 140,
+   "money": 240000,
+   "rep": 660,
+   "value": 330000
+  },
+  "lose": {
+   "money": -100000,
+   "deaths": 31,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "loanMax": 60000,
+  "loanRate": 0.02,
+  "intro": "Скорая помощь. Новое: «Блинная голова», «Общая сдутость». Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🏦 кредиты. Цель: 140 вылеченных  $240 000  репутация 660  стоимость больницы $330 000."
+ },
+ {
+  "id": 7,
+  "name": "Карантин",
+  "w": 56,
+  "h": 38,
+  "holes": [
+   [
+    23,
+    16,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    46,
+    0,
+    10,
+    8,
+    12000
+   ],
+   [
+    0,
+    30,
+    10,
+    8,
+    12000
+   ],
+   [
+    46,
+    30,
+    10,
+    8,
+    16000
+   ]
+  ],
+  "money": 100000,
+  "rep": 450,
+  "spawnEvery": 9.5,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "electro": 300,
+   "transplant": 350
+  },
+  "goals": {
+   "cured": 150,
+   "money": 260000,
+   "rep": 670,
+   "value": 350000
+  },
+  "lose": {
+   "money": -100000,
+   "deaths": 32,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "epid": 1,
+  "loanMax": 60000,
+  "loanRate": 0.02,
+  "intro": "Карантин. Новое: «Статический ёжик», «Разряженность». Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🦠 эпидемии, 🏦 кредиты. Цель: 150 вылеченных  $260 000  репутация 670  стоимость больницы $350 000."
+ },
+ {
+  "id": 8,
+  "name": "Звёздная клиника",
+  "w": 56,
+  "h": 40,
+  "holes": [
+   [
+    23,
+    17,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    46,
+    0,
+    10,
+    8,
+    14000
+   ],
+   [
+    0,
+    32,
+    10,
+    8,
+    14000
+   ],
+   [
+    46,
+    32,
+    10,
+    8,
+    18000
+   ]
+  ],
+  "money": 110000,
+  "rep": 450,
+  "spawnEvery": 9.25,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "bluescreen",
+   "looping",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney",
+   "bagpipelungs",
+   "sneezykidney"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "reboot",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "reboot": 350,
+   "transplant": 350
+  },
+  "goals": {
+   "cured": 160,
+   "money": 280000,
+   "rep": 680,
+   "value": 370000
+  },
+  "lose": {
+   "money": -120000,
+   "deaths": 33,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "epid": 1,
+  "vip": 1,
+  "loanMax": 80000,
+  "loanRate": 0.02,
+  "intro": "Звёздная клиника. Новое: «Синий экран», «Зацикленность». Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🦠 эпидемии, 🎩 VIP, 🏦 кредиты. Цель: 160 вылеченных  $280 000  репутация 680  стоимость больницы $370 000."
+ },
+ {
+  "id": 9,
+  "name": "Сейсмоград",
+  "w": 58,
+  "h": 40,
+  "holes": [
+   [
+    24,
+    17,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    48,
+    0,
+    10,
+    8,
+    16000
+   ],
+   [
+    0,
+    32,
+    10,
+    8,
+    16000
+   ],
+   [
+    48,
+    32,
+    10,
+    8,
+    20000
+   ]
+  ],
+  "money": 110000,
+  "rep": 450,
+  "spawnEvery": 9.0,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "bluescreen",
+   "looping",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney",
+   "bagpipelungs",
+   "sneezykidney",
+   "gourmetstomach",
+   "lovesickheart"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "reboot",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "reboot": 300,
+   "electro": 200,
+   "transplant": 300
+  },
+  "goals": {
+   "cured": 170,
+   "money": 300000,
+   "rep": 690,
+   "value": 390000
+  },
+  "lose": {
+   "money": -120000,
+   "deaths": 34,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "vip": 1,
+  "quake": 1,
+  "loanMax": 80000,
+  "loanRate": 0.025,
+  "intro": "Сейсмоград. Новое: всё сразу. Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🎩 VIP, 🌋 землетрясения, 🏦 кредиты. Цель: 170 вылеченных  $300 000  репутация 690  стоимость больницы $390 000."
+ },
+ {
+  "id": 10,
+  "name": "Мегаполис",
+  "w": 60,
+  "h": 42,
+  "holes": [
+   [
+    25,
+    18,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    50,
+    0,
+    10,
+    8,
+    18000
+   ],
+   [
+    0,
+    34,
+    10,
+    8,
+    18000
+   ],
+   [
+    50,
+    34,
+    10,
+    8,
+    22000
+   ]
+  ],
+  "money": 120000,
+  "rep": 450,
+  "spawnEvery": 8.75,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "bluescreen",
+   "looping",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney",
+   "bagpipelungs",
+   "sneezykidney",
+   "gourmetstomach",
+   "lovesickheart"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "reboot",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "genetics": 250,
+   "reboot": 350,
+   "transplant": 300
+  },
+  "goals": {
+   "cured": 180,
+   "money": 330000,
+   "rep": 700,
+   "value": 420000
+  },
+  "lose": {
+   "money": -140000,
+   "deaths": 35,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "epid": 1,
+  "vip": 1,
+  "quake": 1,
+  "loanMax": 100000,
+  "loanRate": 0.025,
+  "intro": "Мегаполис. Новое: всё сразу. Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🦠 эпидемии, 🎩 VIP, 🌋 землетрясения, 🏦 кредиты. Цель: 180 вылеченных  $330 000  репутация 700  стоимость больницы $420 000."
+ },
+ {
+  "id": 11,
+  "name": "Остров смеха",
+  "w": 62,
+  "h": 44,
+  "holes": [
+   [
+    26,
+    19,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    52,
+    0,
+    10,
+    8,
+    20000
+   ],
+   [
+    0,
+    36,
+    10,
+    8,
+    20000
+   ],
+   [
+    52,
+    36,
+    10,
+    8,
+    24000
+   ]
+  ],
+  "money": 120000,
+  "rep": 450,
+  "spawnEvery": 8.5,
+  "decay": 2.1,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "bluescreen",
+   "looping",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney",
+   "bagpipelungs",
+   "sneezykidney",
+   "gourmetstomach",
+   "lovesickheart"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "reboot",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "genetics": 300,
+   "electro": 300,
+   "reboot": 400,
+   "transplant": 300
+  },
+  "goals": {
+   "cured": 190,
+   "money": 320000,
+   "rep": 710,
+   "value": 420000
+  },
+  "lose": {
+   "money": -140000,
+   "deaths": 36,
+   "rep": 150
+  },
+  "failDeath": 0.25,
+  "emerg": 1,
+  "epid": 1,
+  "vip": 1,
+  "quake": 1,
+  "loanMax": 100000,
+  "loanRate": 0.03,
+  "intro": "Остров смеха. Новое: всё сразу. Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🦠 эпидемии, 🎩 VIP, 🌋 землетрясения, 🏦 кредиты. Цель: 190 вылеченных  $320 000  репутация 710  стоимость больницы $420 000."
+ },
+ {
+  "id": 12,
+  "name": "Столица Карачуна",
+  "w": 64,
+  "h": 46,
+  "holes": [
+   [
+    27,
+    20,
+    10,
+    6
+   ]
+  ],
+  "lots": [
+   [
+    54,
+    0,
+    10,
+    8,
+    22000
+   ],
+   [
+    0,
+    38,
+    10,
+    8,
+    22000
+   ],
+   [
+    54,
+    38,
+    10,
+    8,
+    26000
+   ]
+  ],
+  "money": 145000,
+  "rep": 450,
+  "spawnEvery": 8.25,
+  "decay": 1.8,
+  "risk": 0.11,
+  "diseases": [
+   "pixel",
+   "yawn",
+   "nosewhistle",
+   "giggles",
+   "grumpliver",
+   "squareeyes",
+   "balloonhead",
+   "echo",
+   "rubberknee",
+   "puffytoes",
+   "selfiesyndrome",
+   "blinknose",
+   "drumheart",
+   "soapsneeze",
+   "jellyspine",
+   "lostshadow",
+   "fizzyblood",
+   "twistedtongue",
+   "cloudhead",
+   "hiccupclock",
+   "zebra",
+   "tail",
+   "spotty",
+   "glowskin",
+   "flathead",
+   "deflated",
+   "statichair",
+   "lowbattery",
+   "bluescreen",
+   "looping",
+   "lazyheart",
+   "wanderliver",
+   "chattykidney",
+   "bagpipelungs",
+   "sneezykidney",
+   "gourmetstomach",
+   "lovesickheart"
+  ],
+  "rooms": [
+   "reception",
+   "gp",
+   "diag",
+   "lab",
+   "pharmacy",
+   "ward",
+   "psych",
+   "pump",
+   "toilet",
+   "staffroom",
+   "cardio",
+   "surgery",
+   "icu",
+   "research",
+   "xray",
+   "derma",
+   "genetics",
+   "inflate",
+   "electro",
+   "reboot",
+   "morgue",
+   "transplant",
+   "library",
+   "chief",
+   "paygp"
+  ],
+  "locked": {
+   "genetics": 350,
+   "electro": 350,
+   "inflate": 300,
+   "reboot": 450,
+   "transplant": 300
+  },
+  "goals": {
+   "cured": 200,
+   "money": 320000,
+   "rep": 680,
+   "value": 460000
+  },
+  "lose": {
+   "money": -160000,
+   "deaths": 37,
+   "rep": 150
+  },
+  "failDeath": 0.2,
+  "emerg": 1,
+  "epid": 1,
+  "vip": 1,
+  "quake": 1,
+  "loanMax": 120000,
+  "loanRate": 0.03,
+  "intro": "Столица Карачуна. Новое: всё сразу. Исследуйте закрытые кабинеты в лаборатории, докупайте участки. События: 🚑 ЧП, 🦠 эпидемии, 🎩 VIP, 🌋 землетрясения, 🏦 кредиты. Цель: 200 вылеченных  $320 000  репутация 680  стоимость больницы $460 000."
+ }
+]

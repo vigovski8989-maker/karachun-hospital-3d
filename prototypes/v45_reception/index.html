@@ -1,0 +1,51 @@
+<!DOCTYPE html><html lang="ru"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width,initial-scale=1,maximum-scale=1,user-scalable=no,viewport-fit=cover">
+<link rel="icon" href="data:,"><title>Больница Карачун — пробная v45.0.4</title>
+<link rel="stylesheet" href="assets/fonts/fonts.css"><style>
+*{box-sizing:border-box;-webkit-tap-highlight-color:transparent;user-select:none}
+html,body{margin:0;height:100%;overflow:hidden;background:#1d2a33;font-family:Nunito,system-ui,Roboto,sans-serif;font-weight:600;color:#fff;touch-action:none}
+canvas{position:fixed;inset:0;width:100%;height:100%}
+#top{position:fixed;top:0;left:0;right:0;display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:6px 8px;padding-top:max(6px,env(safe-area-inset-top));background:rgba(15,25,32,.85);font-size:14px;z-index:5}
+#top b{color:#ffd24a}
+#top .sp{margin-left:auto;display:flex;gap:4px}
+button{background:linear-gradient(#3b82c4,#2a619a);color:#fff;border:0;border-radius:9px;padding:8px 10px;font-size:14px;font-family:inherit;font-weight:800;box-shadow:0 2px 0 #1b3f66,inset 0 1px 0 rgba(255,255,255,.25);text-shadow:0 1px 0 rgba(0,0,0,.25)}button:active{transform:translateY(1px);box-shadow:0 1px 0 #1b3f66}
+button.on{background:#e08a1e} button.red{background:#b33} button.grn{background:#2a8a3a}
+button:disabled{opacity:.4}
+#bar{position:fixed;bottom:0;left:0;right:0;display:flex;gap:6px;padding:6px;padding-bottom:max(6px,env(safe-area-inset-bottom));background:rgba(15,25,32,.85);overflow-x:auto;z-index:5}
+#bar button{flex:1;min-width:0;padding:6px 2px;font-size:11px;line-height:1.25}
+#bar button b{display:block;font-size:20px;font-weight:normal}
+#panel{position:fixed;left:8px;right:8px;bottom:64px;max-height:60%;overflow:auto;background:linear-gradient(rgba(28,46,60,.97),rgba(16,28,38,.97));border:1px solid rgba(140,190,230,.25);box-shadow:0 8px 28px rgba(0,0,0,.45),inset 0 1px 0 rgba(255,255,255,.08);border-radius:14px;padding:10px 12px;display:none;z-index:6;font-size:14px}
+#panel h3{margin:4px 0 8px;font-weight:800;letter-spacing:.2px;color:#e9f4ff;border-bottom:2px solid rgba(110,180,235,.35);padding-bottom:6px}
+.row{display:flex;justify-content:space-between;align-items:center;gap:8px;padding:6px 0;border-bottom:1px solid #345}
+.row small{color:#9bb}
+#build{position:fixed;left:0;right:0;bottom:64px;display:none;justify-content:center;gap:6px;flex-wrap:wrap;z-index:6;padding:6px}
+#build button{padding:12px}
+#msg{position:fixed;top:90px;left:6px;max-width:72%;z-index:4;font-size:13px;line-height:1.3;pointer-events:none}
+#msg div{background:rgba(0,0,0,.5);margin-bottom:2px;padding:2px 6px;border-radius:5px;white-space:normal;overflow-wrap:anywhere;transition:opacity 1s}
+#modal{position:fixed;inset:0;background:rgba(0,0,0,.6);display:none;align-items:center;justify-content:center;z-index:10;padding:max(8px,env(safe-area-inset-top)) max(8px,env(safe-area-inset-right)) max(8px,env(safe-area-inset-bottom)) max(8px,env(safe-area-inset-left));box-sizing:border-box}
+#modal>div{background:#20384a;border-radius:14px;padding:18px;max-width:min(420px,100%);width:auto;margin:0;text-align:center;max-height:100%;overflow-y:auto;-webkit-overflow-scrolling:touch;overscroll-behavior:contain;box-sizing:border-box}
+@media (max-height:480px){#modal>div{padding:10px 14px}#modal h2{margin:4px 0}}
+#modal .row{gap:8px}#modal .row>span{flex-shrink:0;white-space:nowrap}
+.chip{font-style:normal;background:#345;border-radius:8px;padding:1px 5px;margin-right:3px;font-size:11px;white-space:nowrap;display:inline-block}
+#splash{position:fixed;inset:0;z-index:9;background:#f3d9b5 url(assets/splash.jpg) center bottom/cover no-repeat;display:flex;flex-direction:column;align-items:center;font-family:Nunito,sans-serif;transition:opacity .4s}
+#splash h1{margin:calc(env(safe-area-inset-top) + 7vh) 12px 0;font-weight:800;font-size:clamp(30px,10vw,54px);line-height:1.05;text-align:center;color:#fff;text-shadow:0 3px 0 #b5482f,0 6px 14px rgba(80,30,10,.45);letter-spacing:.5px}
+#splash p{margin:8px;color:#7a3e22;font-weight:800;font-size:15px}
+@media (orientation:landscape){#splash{background:linear-gradient(90deg,#fadcb4 calc(100% - 56.25vh),rgba(250,220,180,0) calc(100% - 42vh)),url(assets/splash.jpg) right bottom/contain no-repeat #fadcb4;align-items:flex-start;justify-content:center}#splash h1{margin:0 0 0 6vw;text-align:left}#splash p{margin-left:6vw}}
+#splash.gone{opacity:0;pointer-events:none}
+body.menubg #modal{background:transparent;align-items:flex-end;padding-bottom:max(14px,env(safe-area-inset-bottom))}
+body.menubg #modal>div{max-height:62vh;background:rgba(32,56,74,.93)}
+</style><style>.row>span:last-child{white-space:nowrap}@media(max-width:380px){.row>span:last-child button{padding:6px 7px;font-size:13px}}body:has(#panel[style*="block"]) #tut{visibility:hidden}.v24inf{align-self:center;background:rgba(15,30,45,.85);color:#fff;border-radius:8px;padding:4px 7px;font-size:12px;white-space:nowrap}</style></head><body>
+<div id="splash"><h1>Больница<br>Карачун</h1><p id="splashL">Загрузка…</p></div>
+<canvas id="c"></canvas>
+<div id="top"><span>💰 <b id="money">0</b></span><span>⭐ <b id="rep">0</b></span><span>📅 <b id="date"></b></span><span>✅ <b id="cured"></b></span><span id="chips"></span>
+<span class="sp"><button data-s="0">⏸</button><button data-s="1" class="on">▶</button><button data-s="2">▶▶</button><button data-s="4">▶▶▶</button></span></div>
+<div id="msg"></div>
+<div id="build"></div>
+<div id="panel"></div>
+<div id="bar"><button id="bRooms"><b>🏗</b>Кабинеты</button><button id="bItems"><b>🪴</b>Предметы</button><button id="bHire"><b>👩‍⚕️</b>Нанять</button><button id="bStaff"><b>👥</b>Персонал</button><button id="bGoals"><b>🎯</b>Цели</button><button id="bMenu"><b>☰</b>Меню</button></div>
+<div id="modal"><div id="modalc"></div></div>
+<script src="js/sound.js"></script>
+<script src="js/render.js"></script><script src="js/anim.js"></script><script src="js/motion.js"></script><script src="js/mech.js"></script><script src="js/game.js"></script><script src="js/v11.js"></script><script src="js/v12.js"></script><script src="js/v17.js"></script><script src="js/v18.js"></script><script src="js/v19.js"></script><script src="js/v20.js"></script><script src="js/v21.js"></script><script src="js/v22.js"></script><script src="js/v24.js"></script><script src="js/v25.js"></script><script src="js/v26.js"></script><script src="js/v27.js"></script><script src="js/v41.js"></script><script src="js/v42.js"></script>
+<script type="importmap">{"imports":{"three":"./lib/three.module.min.js","three/addons/":"./lib/jsm/"}}</script>
+<script type="module" src="js3d/r3d.js"></script>
+</body></html>
