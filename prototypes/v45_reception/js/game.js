@@ -23,9 +23,9 @@ let BLK=null;function invBlk(){BLK=null}
 function blk(){if(BLK&&BLK.S===S&&BLK.n===S.nid&&BLK.r===S.rooms.length&&BLK.i===S.items.length)return BLK.s;const s=new Set();for(const r of S.rooms){roomLay(r);for(const t of r.it)if(!t.soft)for(const[x,y]of tilesOf(t.x,t.y,t.fp))s.add(y*S.w+x)}for(const i of S.items){i.fp=i.fp||fpOf(i.type);for(const[x,y]of tilesOf(i.x,i.y,i.fp))s.add(y*S.w+x)}BLK={s,S,n:S.nid,r:S.rooms.length,i:S.items.length};return s}
 function walk0(x,y){if(x<0||y<0||x>=S.w||y>=S.h||isHole(x,y))return false;return !isWall(roomAt(x,y),x,y)}
 function walk(x,y){return walk0(x,y)&&!blk().has(y*S.w+x)}
-function path(sx,sy,tx,ty){sx=Math.round(sx);sy=Math.round(sy);if(sx===tx&&sy===ty)return[];const W=S.w,prev=new Int32Array(W*S.h).fill(-1),q=[sy*W+sx];prev[q[0]]=q[0];
+function path(sx,sy,tx,ty,avoid){sx=Math.round(sx);sy=Math.round(sy);if(sx===tx&&sy===ty)return[];const W=S.w,prev=new Int32Array(W*S.h).fill(-1),q=[sy*W+sx];prev[q[0]]=q[0];
  for(let i=0;i<q.length;i++){const c=q[i],x=c%W,y=(c/W)|0;if(x===tx&&y===ty){const p=[];let k=c;while(k!==q[0]){p.push({x:k%W,y:(k/W)|0});k=prev[k]}return p.reverse()}
-  for(const[dx,dy]of DIRS){const nx=x+dx,ny=y+dy,n=ny*W+nx;if(((nx===tx&&ny===ty)?walk0(nx,ny):walk(nx,ny))&&prev[n]<0){// входить в комнату только через дверь
+  for(const[dx,dy]of DIRS){const nx=x+dx,ny=y+dy,n=ny*W+nx;if(((nx===tx&&ny===ty)?walk0(nx,ny):walk(nx,ny))&&prev[n]<0&&!avoid?.has(n)){// входить в комнату только через дверь
    const ra=roomAt(x,y),rb=roomAt(nx,ny);if(ra!==rb&&!((ra&&ra.door.x===x&&ra.door.y===y)||(rb&&rb.door.x===nx&&rb.door.y===ny)))continue;prev[n]=c;q.push(n)}}}
  return null}
 function doorOut(r){const d=DIRS[r.side];return{x:r.door.x+d[0],y:r.door.y+d[1]}}
@@ -47,18 +47,84 @@ function staffReady(r){if(!D.rooms[r.type].staff)return true;const s=S.staff.fin
 function eff(s){return (0.5+s.skill/100)*(1-s.fat/250)}
 
 // ---------- Движение ----------
-function goTo(e,x,y){const p=path(e.x,e.y,x,y);if(p===null){e.path=[];return false}e.path=p;return true}
+function goTo(e,x,y,avoid){const p=path(e.x,e.y,x,y,avoid);if(p===null){e.path=[];return false}e.path=p;return true}
 function move(e,dt,sp=2.2){if(!e.path.length)return true;const n=e.path[0],dx=n.x-e.x,dy=n.y-e.y,d=Math.hypot(dx,dy),st=sp*dt;
  if(Math.abs(dx)+Math.abs(dy)>.001)e.dir=Math.abs(dx)>=Math.abs(dy)?(dx>0?0:2):(dy>0?1:3);if(d<=st){e.x=n.x;e.y=n.y;e.path.shift();return!e.path.length}e.x+=dx/d*st;e.y+=dy/d*st;return false}
 
 // ---------- Пациенты ----------
 function spawnPatient(){const ds0=L().diseases,ds1=ds0.filter(z=>!roomLocked(D.dis[z].cure)),ds=ds1.length?ds1:ds0,dz=pick(ds);const p={id:S.nid++,name:pname(),dis:dz,x:S.ent.x,y:S.ent.y,path:[],state:'seek',need:'reception',health:100,pat:100,cert:0,known:false,wait:0,room:null,t:0,thought:null,hue:ri(0,360),wcDone:Math.random()<.55,wcAt:rnd(45,120)};S.pats.push(p);Snd.arrive()}
 function comfortAt(x,y){let c=0;for(const i of S.items){if(Math.abs(i.x-x)+Math.abs(i.y-y)<=3){const d=D.items[i.type];c+=(d.comfort||0)*(i.type==='plant'&&i.water<30?0:1)+(d.warm||0)}}if(S.rooms.some(r=>r.type==='toilet'))c+=2;return Math.min(c,8)}
-function leave(p,why,rep){unqueue(p);p.wash=false;p.state='leave';p.thought=why;S.rep=Math.max(0,S.rep-(rep||0));goTo(p,S.ent.x,S.ent.y)}
-function unqueue(p){S.rooms.forEach(q=>{if(q.type==='toilet'&&q.busy===p.id)q.busy=null});p.wantSeat=null;releaseBench(p);const r=S.rooms.find(r=>r.id===p.room);if(r){r.queue=r.queue.filter(i=>i!==p.id);if(r.busy===p.id)r.busy=null}p.room=null}
-function waitSpot(r,p){const o=doorOut(r);const bs=S.items.filter(i=>i.type==='bench'&&Math.abs(i.x-o.x)+Math.abs(i.y-o.y)<=7).sort((a,b)=>Math.abs(a.x-o.x)+Math.abs(a.y-o.y)-Math.abs(b.x-o.x)-Math.abs(b.y-o.y));
- for(const b of bs){b.occ=b.occ||[0,0];for(let k=0;k<b.occ.length;k++){if(!b.occ[k]||!S.pats.some(q=>q.id===b.occ[k])){b.occ[k]=p.id;return{x:b.x+k,y:b.y,pose:'sit',dir:1,seat:'bench',bench:true,slot:k}}}}
- for(let k=0;k<20;k++){const x=o.x+ri(-2,2),y=o.y+ri(-2,2);if(walk(x,y)&&!roomAt(x,y))return{x,y,pose:'stand',dir:ri(0,3)}}return{x:o.x,y:o.y,pose:'stand',dir:1}}
+function leave(p,why,rep){unqueue(p);p.wash=false;p.state='leave';p.thought=why;S.rep=Math.max(0,S.rep-(rep||0));if(!goTo(p,S.ent.x,S.ent.y,occupiedWaitTiles(p)))goTo(p,S.ent.x,S.ent.y)}
+function unqueue(p){standingWaitSpots.delete(p);S.rooms.forEach(q=>{if(q.type==='toilet'&&q.busy===p.id)q.busy=null});p.wantSeat=null;releaseBench(p);const r=S.rooms.find(r=>r.id===p.room);if(r){r.queue=r.queue.filter(i=>i!==p.id);if(r.busy===p.id)r.busy=null}p.room=null}
+const standingWaitSpots = new WeakMap();
+
+function occupiedWaitTiles(p){
+ const tiles=new Set();
+ for(const q of S.pats){
+  if(q===p||q.state!=='queue')continue;
+  const spot=standingWaitSpots.get(q);
+  if(spot)tiles.add(spot.y*S.w+spot.x);
+  if(!q.vs&&!q.path.length&&!roomAt(Math.round(q.x),Math.round(q.y)))tiles.add(Math.round(q.y)*S.w+Math.round(q.x));
+ }
+ return tiles;
+}
+
+function waitSpot(r,p){
+ const door=doorOut(r),reserved=occupiedWaitTiles(p);
+ const benches=S.items.filter(i=>i.type==='bench'&&Math.abs(i.x-door.x)+Math.abs(i.y-door.y)<=7)
+  .sort((a,b)=>Math.abs(a.x-door.x)+Math.abs(a.y-door.y)-Math.abs(b.x-door.x)-Math.abs(b.y-door.y));
+ for(const bench of benches){
+  bench.occ=bench.occ||[0,0];
+  for(let k=0;k<bench.occ.length;k++){
+   if(bench.occ[k]&&S.pats.some(q=>q.id===bench.occ[k]))continue;
+   const spot={x:bench.x+k,y:bench.y,pose:'sit',dir:1,seat:'bench',bench:true,slot:k};
+   if(!goTo(p,spot.x,spot.y,reserved))continue;
+   bench.occ[k]=p.id;
+   return spot;
+  }
+ }
+ const [dx,dy]=DIRS[r.side];
+ const occupied=new Set(reserved),preferClearDoor=new Set(reserved);
+ for(let i=0;i<=1;i++)preferClearDoor.add((door.y+dy*i)*S.w+door.x+dx*i);
+ for(const q of S.pats)if(q!==p&&q.state!=='dead')occupied.add(Math.round(q.y)*S.w+Math.round(q.x));
+ for(const s of S.staff)occupied.add(Math.round(s.y)*S.w+Math.round(s.x));
+ const doorTiles=new Set();
+ for(const room of S.rooms){
+  const o=doorOut(room),[ox,oy]=DIRS[room.side];
+  for(let i=0;i<=1;i++)doorTiles.add((o.y+oy*i)*S.w+o.x+ox*i);
+ }
+ const ownRoom=roomAt(Math.round(p.x),Math.round(p.y));
+ const avoidDoor=ownRoom||(Math.round(p.x)===door.x&&Math.round(p.y)===door.y)?reserved:preferClearDoor;
+ const side=(p.y-door.y)*dx-(p.x-door.x)*dy<0?-1:1;
+ for(const distance of [1,2,3,4,0]){
+  for(const offset of [side,-side,2*side,-2*side,3*side,-3*side]){
+   const x=door.x+dx*distance-dy*offset,y=door.y+dy*distance+dx*offset;
+   const tile=y*S.w+x;
+   if(occupied.has(tile)||doorTiles.has(tile)||(x===S.ent.x&&y===S.ent.y)||!walk(x,y)||roomAt(x,y))continue;
+   if(!goTo(p,x,y,avoidDoor))continue;
+   const dir=Math.abs(door.x-x)>Math.abs(door.y-y)?(door.x>x?0:2):(door.y>y?1:3);
+   const spot={x,y,pose:'stand',dir};
+   standingWaitSpots.set(p,spot);
+   return spot;
+  }
+ }
+ return null;
+}
+
+function patientLeavingThrough(r,p){
+ const door=doorOut(r),roomId=r.par||r.id;
+ return S.pats.some(q=>{
+  if(q===p||q.state==='dead'||q.state==='treat')return false;
+  const inside=roomAt(Math.round(q.x),Math.round(q.y));
+  if(inside&&(inside.par||inside.id)===roomId){
+   if(q.state==='seek'&&q.room==null&&S.rooms.some(room=>room.type===q.need))return true;
+   return q.path.some(step=>step.x===door.x&&step.y===door.y);
+  }
+  const next=q.path[0];
+  if(!next||Math.hypot(q.x-door.x,q.y-door.y)>1.25)return false;
+  return Math.hypot(next.x-r.door.x,next.y-r.door.y)>Math.hypot(q.x-r.door.x,q.y-r.door.y);
+ });
+}
 function updPatient(p,dt){const dz=D.dis[p.dis];
  if(p.state==='dead'){p.t+=dt;return}
  if(p.state==='vip'){updVip(p,dt);return}
@@ -71,12 +137,43 @@ function updPatient(p,dt){const dz=D.dis[p.dis];
  switch(p.state){
  case'seek':{const rs=S.rooms.filter(r=>r.type===p.need);if(!rs.length){p.thought='❓';p.wait+=dt;move(p,dt);if(!p.path.length&&Math.random()<.02){const x=ri(1,S.w-2),y=ri(S.h-6,S.h-2);if(walk(x,y)&&!roomAt(x,y))goTo(p,x,y)}
    if(p.wait>(p.known?60:40)){msg(p.name+': нет кабинета «'+D.rooms[p.need].name+'» — отправлен(а) домой');S.sent++;leave(p,'🏠',3)}return}
-  rs.sort((a,b)=>a.queue.length/rCap(a)-b.queue.length/rCap(b));const r=rs[0];if(p.emg){let k=r.queue.length;while(k>1){const q=S.pats.find(x=>x.id===r.queue[k-1]);if(q&&q.emg)break;k--}r.queue.splice(Math.max(Math.min(1,r.queue.length),k),0,p.id)}else r.queue.push(p.id);p.room=r.id;p.thought=null;p.wait=0;const w=waitSpot(r,p);goTo(p,w.x,w.y);p.wantSeat=w.pose!=='stand'?w:null;p.dir=p.dir==null?1:p.dir;p.state='queue';break}
+  rs.sort((a,b)=>a.queue.length/rCap(a)-b.queue.length/rCap(b));const r=rs[0];if(p.emg){let k=r.queue.length;while(k>1){const q=S.pats.find(x=>x.id===r.queue[k-1]);if(q&&q.emg)break;k--}r.queue.splice(Math.max(Math.min(1,r.queue.length),k),0,p.id)}else r.queue.push(p.id);p.room=r.id;p.thought=null;p.wait=0;const w=waitSpot(r,p);p.wantSeat=w?.pose==='sit'?w:null;p.dir=p.dir==null?1:p.dir;p.state='queue';break}
  case'queue':{const r=S.rooms.find(r=>r.id===p.room);if(!r){clearSeat(p);p.state='seek';return}
-  if(!p.vs){if(p.path.length)move(p,dt);else if(p.wantSeat)takeSeat(p,p.wantSeat)}
+  const canEnter=r.queue[0]===p.id&&r.busy===null&&staffReady(r);
+  if(!p.vs){
+   if(p.path.length)move(p,dt);
+   else if(p.wantSeat){
+    if(Math.hypot(p.x-p.wantSeat.x,p.y-p.wantSeat.y)<.01)takeSeat(p,p.wantSeat);
+    else if(!goTo(p,p.wantSeat.x,p.wantSeat.y,occupiedWaitTiles(p))){releaseBench(p);p.wantSeat=null}
+   }
+   else{
+    const spot=standingWaitSpots.get(p);
+    if(spot&&walk(spot.x,spot.y)&&!roomAt(spot.x,spot.y)){
+     if(Math.hypot(p.x-spot.x,p.y-spot.y)<.01)p.dir=spot.dir;
+     else if(!goTo(p,spot.x,spot.y,occupiedWaitTiles(p)))standingWaitSpots.delete(p);
+    }else if(!canEnter&&S.t>=(p.nextWaitSpot||0)){
+     standingWaitSpots.delete(p);
+     const w=waitSpot(r,p);
+     p.wantSeat=w?.pose==='sit'?w:null;
+     p.nextWaitSpot=S.t+1;
+    }
+   }
+  }
   p.wc=(p.wc||0)+dt;const tr=p.wcDone?null:S.rooms.find(q=>q.type==='toilet'&&q.busy===null&&roomLay(q).sp.patient&&Math.abs(q.x-p.x)+Math.abs(q.y-p.y)<=16);
-  if(!p.wcDone&&p.wc>p.wcAt&&tr&&r.queue[0]!==p.id&&r.queue.length>1&&(!p.vs||p.vs.ph==='sat')){tr.busy=p.id;p.wcRoom=tr.id;r.queue=r.queue.filter(i=>i!==p.id);p.room=null;releaseBench(p);p.wantSeat=null;p.thought='🚽';p.state='wc1';p.wcGo=false;return}
-  if(r.queue[0]===p.id&&p.vs&&p.vs.ph==='sat'&&r.busy!==null&&r.busy!==p.id&&false)break;if(r.queue[0]===p.id&&r.busy===null&&staffReady(r)){p.wantSeat=null;if(p.vs){if(p.vs.ph==='sat')leaveSeat(p);break}if(p.path.length)break;r.busy=p.id;releaseBench(p);const sp=spotPatient(r);goTo(p,sp.x,sp.y);p.state='enter'}break}
+  if(!p.wcDone&&p.wc>p.wcAt&&tr&&r.queue[0]!==p.id&&r.queue.length>1&&(!p.vs||p.vs.ph==='sat')){tr.busy=p.id;p.wcRoom=tr.id;r.queue=r.queue.filter(i=>i!==p.id);p.room=null;releaseBench(p);standingWaitSpots.delete(p);p.wantSeat=null;p.thought='🚽';p.state='wc1';p.wcGo=false;return}
+  if(canEnter){
+   if(p.vs){if(p.vs.ph==='sat')leaveSeat(p);break}
+   if(p.path.length||patientLeavingThrough(r,p))break;
+   const sp=spotPatient(r);
+   if(S.t<(p.nextDoorTry||0))break;
+   if(!goTo(p,sp.x,sp.y,occupiedWaitTiles(p))){p.nextDoorTry=S.t+.5;break}
+   r.busy=p.id;
+   releaseBench(p);
+   standingWaitSpots.delete(p);
+   p.wantSeat=null;
+   p.state='enter';
+  }
+  break}
  case'enter':{const r=S.rooms.find(r=>r.id===p.room);if(!r){p.state='seek';return}if(move(p,dt)){p.state='treat';p.t=r_dur(p);p.tT=p.t;const sp=spotPatient(r);p.dir=sp.dir!=null?sp.dir:p.dir;takeSeat(p,sp)}break}
  case'treat':{const r=S.rooms.find(r=>r.id===p.room);if(!r){clearSeat(p);p.state='seek';return}const s=S.staff.find(s=>s.id===r.staff);if(s&&s.state!=='work'&&!(s.vs&&s.vs.ph!=='sat'))return;if(p.t>0)p.t-=dt*(s?eff(s):1);if(p.vs&&p.vs.ph==='sat'&&p.t<=(SEAT_T[p.vs.pose]||.9))leaveSeat(p);if(p.t<=0){if(p.vs)return;finish(p,r,s)}break}
  case'wc1':{const tr=S.rooms.find(r=>r.id===p.wcRoom);if(!tr){p.state='seek';p.thought=null;return}const sp=tr.sp.patient;if(!p.wcGo){if(!goTo(p,sp.x,sp.y+1)&&!goTo(p,sp.x,sp.y)){tr.busy=null;p.wcDone=true;p.state='seek';return}p.wcGo=true}

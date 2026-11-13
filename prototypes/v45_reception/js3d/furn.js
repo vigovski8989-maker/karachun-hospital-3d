@@ -31,7 +31,7 @@ export function mat(c,o={}){
   else if(o.toon)m=new THREE.MeshToonMaterial({color:c,gradientMap:grad,emissive:o.em??0,transparent:!!o.op,opacity:o.op??1,map:o.map||null});
   else {
     m=new THREE.MeshStandardMaterial({
-      color:c, map:o.map||null, roughnessMap:o.rmap||null,
+      color:c, map:o.map||null, roughnessMap:o.rmap||null, vertexColors:!!o.vertexColors,
       roughness:o.rough??.72, metalness:o.metal??0,
       emissive:o.em??0, emissiveIntensity:o.em?0.55:0,
       transparent:!!(o.op||o.alpha), opacity:o.op??1,
@@ -119,6 +119,67 @@ export function receptionEntrance(){
  C(g,STEEL,.008,.16,-.10,.94,.065,{metal:.75,rough:.25});for(const y of[.95,1.08])B(g,STEEL,.017,.012,.04,-.10,y,.045,{metal:.7,rough:.3});
  R(g,0xaabcc2,.90,.003,.22,.5,-.002,0,.015,{metal:.45,rough:.45});return g;
 }
+const CONSULT_GREEN=0x567c71, CONSULT_DARK=0x395a54, CONSULT_IVORY=0xe8e4d6;
+const CONSULT_LAMINATE={map:TEX.recStone,rough:.5};
+const CONTACT_GEOMETRY=new THREE.PlaneGeometry(1,1).rotateX(-Math.PI/2);
+
+export function clinicContact(g,w,d,x,z,opacity=.24){
+ if(!TEX.clinicContact){
+  const size=32,data=new Uint8Array(size*size*4);
+  for(let y=0;y<size;y++)for(let x=0;x<size;x++){
+   const radius=Math.min(1,Math.hypot((x+.5)*2/size-1,(y+.5)*2/size-1));
+   data[(y*size+x)*4+3]=Math.round((1-radius*radius)**2*255);
+  }
+  const texture=new THREE.DataTexture(data,size,size);
+  texture.magFilter=texture.minFilter=THREE.LinearFilter;
+  texture.needsUpdate=true;
+  TEX.clinicContact=texture;
+ }
+ const material=mat(0x000000,{map:TEX.clinicContact,basic:true,op:opacity});
+ material.depthWrite=false;
+ material.userData.noCastShadow=material.userData.noReceiveShadow=true;
+ const mesh=new THREE.Mesh(CONTACT_GEOMETRY,material);
+ mesh.position.set(x,.009,z);
+ mesh.scale.set(w,1,d);
+ mesh.renderOrder=1;
+ g.add(mesh);
+}
+
+export function consultSign(){
+ const g=new THREE.Group();
+ RF(g,CONSULT_DARK,.56,.31,.045,0,0,0,.035,{rough:.55});
+ RF(g,CONSULT_IVORY,.49,.24,.012,0,.035,.027,.028,{rough:.55});
+ B(g,CONSULT_GREEN,.19,.042,.008,0,.136,.036);
+ B(g,CONSULT_GREEN,.042,.19,.008,0,.061,.036);
+ return g;
+}
+
+export function clinicPlanter(){
+ const g=new THREE.Group(),stone=0xb7b5a6;
+ clinicContact(g,1.75,1.56,0,0,.25);
+ R(g,stone,1.45,.26,1.25,0,0,0,.12,{rough:.8});
+ R(g,0x686049,1.25,.022,1.05,0,.255,0,.10,{rough:.93});
+ C(g,0x796650,.065,1.12,0,.25,0,{rough:.82});
+ for(const [x,y,z,r] of [[0,1.40,0,.60],[-.32,1.35,-.16,.38],[.35,1.34,.10,.39],[.02,1.69,-.05,.37]]){
+  Sph(g,x<0?0x527652:0x678c5a,r,x,y,z,{rough:.85});
+ }
+ for(const [x,z] of [[-.44,.27],[.42,.28],[-.39,-.26],[.35,-.24]]){
+  Sph(g,0x739160,.16,x,.29,z,{rough:.92});
+ }
+ return g;
+}
+
+export function consultPoster(){
+ const g=new THREE.Group();
+ RF(g,0x627c70,.50,.64,.045,0,0,0,.024,{rough:.62});
+ RF(g,0xf0eee0,.44,.56,.012,0,.04,.027,.014,{rough:.8});
+ B(g,0x6c887b,.31,.04,.008,0,.52,.041);
+ for(const [x,y,w] of [[-.13,.38,.10],[.095,.38,.16],[-.13,.27,.10],[.08,.27,.19],[-.13,.16,.10],[.10,.16,.15]]){
+  B(g,x<0?0x73a599:0xa5b1a4,w,.031,.008,x,y,.041);
+ }
+ return g;
+}
+
 export const F={
  recdesk(g){
   const BLUE=0x437692,DEEP=0x2e566d,PANEL=0x527f98,STONE=0xf5f1e6;
@@ -173,6 +234,46 @@ export const F={
  },
 
  desk(g){B(g,WOOD,1.8,.06,.8,1,.72,.5);legs4(g,WOODD,1.8,.8,.72,.1,.1);B(g,WOODD,.5,.62,.75,.4,.1,.5);monitor(g,1.25,.78,.35);B(g,WH,.3,.02,.22,.75,.78,.55);B(g,0x2c6fbf,.18,.04,.25,.45,.78,.5)},
+ consult_desk(g){
+  clinicContact(g,2.15,1.36,1,.5,.28);
+  for(const x of [.20,1.8]){
+   R(g,CONSULT_DARK,.055,.72,.055,x,0,.2,.008,{metal:.25});
+   R(g,CONSULT_DARK,.055,.72,.055,x,0,.8,.008,{metal:.25});
+  }
+  R(g,CONSULT_GREEN,.53,.59,.63,.43,.07,.5,.035,{rough:.62});
+  for(const y of [.13,.32,.49]){
+   RF(g,0x6d9385,.46,.15,.025,.43,y,.188,.016,{rough:.58});
+   B(g,STEEL,.13,.023,.022,.43,y+.105,.163,{metal:.48,rough:.4});
+  }
+  R(g,CONSULT_IVORY,1.83,.075,.77,1,.705,.5,.045,CONSULT_LAMINATE);
+  recMonitor(g,1.25,.78,.39,-1);
+  R(g,0x4b6067,.32,.015,.12,1.23,.78,.23,.015,{rough:.62});
+  R(g,0x547f87,.25,.025,.28,.64,.78,.56,.017,{rough:.68});
+  B(g,WH,.18,.004,.22,.64,.806,.56);
+  C(g,STEEL,.08,.018,1.65,.78,.68,{metal:.45,rough:.42});
+  C(g,STEEL,.015,.31,1.65,.79,.68,{metal:.45,rough:.42});
+  R(g,CONSULT_GREEN,.23,.07,.13,1.60,1.075,.65,.035,{rough:.45});
+ },
+ consult_cabinet(g){
+  clinicContact(g,1.15,.88,.5,.38,.25);
+  R(g,CONSULT_DARK,.76,.08,.56,.5,0,.36,.018,{rough:.55});
+  R(g,CONSULT_IVORY,.82,1.38,.59,.5,.08,.36,.032,CONSULT_LAMINATE);
+  RF(g,0x425852,.69,.77,.035,.5,.62,.656,.023,{rough:.65});
+  for(const y of [.67,.99,1.34])B(g,0x90a198,.64,.025,.055,.5,y,.693);
+  for(const [x,y,h,color] of [[.26,.7,.16,0xd8e8e2],[.41,.7,.12,0xc1885d],[.59,.7,.19,0x80a9a5],[.71,.7,.11,0xeee8d6],[.34,1.02,.16,0xd9ddc9],[.57,1.02,.22,0xbab9a5]]){
+   R(g,color,.095,h,.065,x,y,.695,.01,{rough:.57});
+   B(g,WH,.062,.043,.006,x,y+h*.32,.731);
+  }
+  for(const x of [.18,.82])B(g,CONSULT_GREEN,.035,.78,.028,x,.61,.745);
+  RF(g,CONSULT_GREEN,.70,.42,.04,.5,.13,.658,.023,{rough:.58});
+  pull(g,.5,.42,.687,.17);
+ },
+ consult_chair(g){
+  clinicContact(g,.80,.77,.5,.5);
+  for(const x of [.32,.68])for(const z of [.33,.67])B(g,CONSULT_DARK,.038,.42,.038,x,0,z,{metal:.30});
+  R(g,0x5f887a,.46,.08,.44,.5,.42,.5,.055,{rough:.76});
+  RF(g,0x6c9688,.43,.41,.075,.5,.51,.30,.04,{rough:.76});
+ },
  chair_office(g){chair(g,0,0x2f4b70);C(g,DARK,.25,.03,.5,0,.5,0,1)},
  chair_plain(g){chair(g,0,0xc98b4f)},chair(g){chair(g,0,0x5f86b5)},
  cabinet(g){B(g,0x9fb4c4,.8,1.3,.5,.5,0,.27);B(g,0x7e95a6,.84,.05,.54,.5,1.3,.27);for(const y of[.08,.5,.92]){B(g,0xb9cbd8,.72,.36,.03,.5,y,.52);B(g,STEEL,.22,.04,.03,.5,y+.26,.545);B(g,WH,.16,.08,.01,.5,y+.12,.54)}B(g,0xe8c15a,.12,.3,.22,.3,1.35,.27);B(g,0x4f86c6,.1,.28,.22,.43,1.35,.27);B(g,0xd25b5b,.1,.26,.22,.55,1.35,.27)},

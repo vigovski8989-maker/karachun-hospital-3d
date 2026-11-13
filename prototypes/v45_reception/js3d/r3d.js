@@ -5,7 +5,7 @@ import {GLTFLoader} from 'three/addons/loaders/GLTFLoader.js';
 import {DRACOLoader} from 'three/addons/loaders/DRACOLoader.js';
 import {clone as skClone} from 'three/addons/utils/SkeletonUtils.js';
 import {mergeGeometries} from 'three/addons/utils/BufferGeometryUtils.js';
-import {makeFurn,mat,GRAD,TEX,receptionWindow,receptionEntrance} from './furn.js';
+import {makeFurn,mat,GRAD,TEX,receptionWindow,receptionEntrance,clinicPlanter,consultSign,consultPoster} from './furn.js';
 // PERF45: exact batched CPU skin sampling. Same float operations and order as THREE.SkinnedMesh.applyBoneTransform;
 // bone matrices are only read inside one batch, so each bone product (matrixWorld*boneInverse) is computed once per batch instead of per vertex influence.
 const SK45=new WeakMap(),_sk45v=new THREE.Vector3(),_sk45w=new THREE.Vector4(),_sk45i=new THREE.Vector4();let SK45stamp=0;
@@ -133,13 +133,18 @@ class Char{constructor(role,o={}){const g=o.shoeContact33?SHOE33[role]:G[role];t
  layers(dt){for(const n in this.layer){this.lw[n]??=0;this.lw[n]+=(this.layer[n]-this.lw[n])*Math.min(1,dt*(n==='reach39'?9:3))}const fw=new THREE.Vector3(Math.sin(this.yaw),0,Math.cos(this.yaw)),rt=new THREE.Vector3().crossVectors(UP,fw),b=this.b,t=this.t;
   if(this.soft){rotWorld(b.Head,rt,-this.soft*.15);if(this.role!=='receptionist'){rotWorld(b.clavicle_l,fw,-.08);rotWorld(b.clavicle_r,fw,.08)}}
   const wr=this.lw.write||0;if(wr>.01&&this.role!=='receptionist'){const ty=Math.sin(t*11),tz=Math.sin(t*9+1.7);rotWorld(b.upperarm_r,rt,-.22*wr);rotWorld(b.lowerarm_r,rt,(-.28+.05*ty)*wr);rotWorld(b.hand_r,rt,(.15+.1*ty)*wr);rotWorld(b.upperarm_l,rt,-.2*wr);rotWorld(b.lowerarm_l,rt,(-.26+.05*tz)*wr);rotWorld(b.hand_l,rt,(.15+.1*tz)*wr);rotWorld(b.Head,rt,-.12*wr)}
-  // Friendly greet: look toward patient + tiny nod; optional micro wrist lift — arms stay in idle lap/desk pose
   const gr=this.lw.greet||0;if(gr>.01){
-    let look=0; if(this.lookPat){const px=(this.lookPat.x??this.lookPat.X??0)+.5,pz=(this.lookPat.y??this.lookPat.Z??this.lookPat.z??0)+.5;
-      const dx=px-this.root.position.x, dz=pz-this.root.position.z; look=Math.atan2(dx,dz)-this.yaw;
-      while(look>Math.PI)look-=Math.PI*2; while(look<-Math.PI)look+=Math.PI*2; look=Math.max(-.45,Math.min(.45,look))}
-    this.recLookYaw=(this.recLookYaw||0)+(look-(this.recLookYaw||0))*Math.min(1,dt*4);rotWorld(b.Head,UP,this.recLookYaw*gr);rotWorld(b.Head,rt,-.08*gr);rotWorld(b.spine_02,UP,look*.35*gr);
-    if(b.hand_r)b.hand_r.rotateX(.08*gr)}
+    let look=0;
+    if(this.lookPat){
+      const dx=this.lookPat.x+.5-this.root.position.x,dz=this.lookPat.y+.5-this.root.position.z;
+      look=THREE.MathUtils.clamp(angd(Math.atan2(dx,dz),this.yaw),-.50,.50);
+    }
+    this.recLookYaw=(this.recLookYaw||0)+(look-(this.recLookYaw||0))*Math.min(1,dt*6);
+    rotWorld(b.Head,UP,this.recLookYaw*gr);
+    rotWorld(b.Head,rt,(-.17+.31*(this.recNod||0))*gr);
+    rotWorld(b.spine_02,UP,look*.28*gr);
+  }
+  if(this.recDesk)rotWorld(b.Head,rt,.16*(this.lw.deskType||0));
   const ex=this.lw.exam||0;if(ex>.01){const s=Math.sin(t*.9),c=Math.cos(t*.7);rotWorld(b.upperarm_r,rt,-(1.05+.08*s)*ex);rotWorld(b.upperarm_r,UP,(.35+.1*c)*ex);rotWorld(b.lowerarm_r,rt,-.55*ex);rotWorld(b.spine_02,rt,-.18*ex);rotWorld(b.Head,rt,-.2*ex)}
   const rc=this.lw.reach39||0;if(rc>.01&&this.reachT39&&b.upperarm_r&&b.lowerarm_r&&b.hand_r){const V=THREE.Vector3,T=new V(...this.reachT39),aim=(bone,child,w)=>{const P=bone.getWorldPosition(new V()),C=child.getWorldPosition(new V()),cur=C.sub(P).normalize(),des=T.clone().sub(P).normalize(),ax=new V().crossVectors(cur,des),sn=ax.length();if(sn<1e-6)return;rotWorld(bone,ax.multiplyScalar(1/sn),Math.atan2(sn,cur.dot(des))*w)};
    // lean the chest toward a target beyond arm's length (horizontal distance from the shoulder), then aim upper arm and forearm at the world target; hand follows the forearm.
@@ -212,6 +217,7 @@ let ST=null,STSIG='';const DYN=new Map();// room.id -> {doorLeaf, parts:{name:[m
 function hex(c){return new THREE.Color(c)}
 function mixW(c,k){return hex(c).lerp(new THREE.Color(0xffffff),k)}
 const NFP={scanner:[1,2],bed:[1,2]};
+const clinicExteriorFloor=new THREE.MeshLambertMaterial({vertexColors:true});
 function dirYaw(d){return [Math.PI/2,0,-Math.PI/2,Math.PI][d]??0}
 function placeYaw(t,r){const fp=t.fp||fpOf(t.k||t.type),k=t.k||t.type;if(t.dir!=null)return dirYaw(t.dir);if(r&&/^(desk|recdesk|chiefdesk)$/.test(k)&&r.sp&&r.sp.staff){const st=r.sp.staff,du=(t.x+fp[0]/2)-(st.x+.5),dv=(t.y+fp[1]/2)-(st.y+.5);return Math.abs(du)>Math.abs(dv)?(du>0?Math.PI/2:-Math.PI/2):(dv>0?0:Math.PI)}const nfp=NFP[k]||(window.D&&D.furn&&D.furn[k]?D.furn[k].fp:fp)||fp;
  if(!r)return 0;const cx=t.x+fp[0]/2,cy=t.y+fp[1]/2,rx=r.x+r.w/2,ry=r.y+r.h/2,dsd=[[0,1],[1,0],[0,-1],[-1,0]][r.side||0];
@@ -219,47 +225,108 @@ function placeYaw(t,r){const fp=t.fp||fpOf(t.k||t.type),k=t.k||t.type;if(t.dir!=
  if(sq){const du=rx-cx,dv=ry-cy;if(Math.abs(du)<.01&&Math.abs(dv)<.01)return Math.atan2(dsd[0],dsd[1]);return Math.abs(du)>Math.abs(dv)?(du>0?Math.PI/2:-Math.PI/2):(dv>0?0:Math.PI)}
  if(same){const dv=ry-cy;return Math.abs(dv)<.01?(dsd[1]<0?Math.PI:0):(dv>0?0:Math.PI)}
  const du=rx-cx;return Math.abs(du)<.01?(dsd[0]<0?-Math.PI/2:Math.PI/2):(du>0?Math.PI/2:-Math.PI/2)}
-function placeFurn(t,r,root,dyn){const k=t.k||t.type,fp=t.fp||fpOf(k),nfp=NFP[k]||[Math.max(...fp),Math.min(...fp)];const g=makeFurn(r?.type==='reception'&&k==='cabinet'?'rec_cabinet':r?.type==='reception'&&k==='noticeboard'?'rec_noticeboard':r?.type==='reception'&&k==='plant'?'rec_plant':k);
+const CLINIC_FURN={reception:{cabinet:'rec_cabinet',noticeboard:'rec_noticeboard',plant:'rec_plant'},
+ gp:{desk:'consult_desk',cabinet:'consult_cabinet',chair_plain:'consult_chair'}};
+function placeFurn(t,r,root,dyn){const k=t.k||t.type,fp=t.fp||fpOf(k);const g=makeFurn(CLINIC_FURN[r?.type]?.[k]||k);
  const nf=(NFP[k]||(fp[0]===fp[1]?fp:null))||(k in{recdesk:1,desk:1,tubes:1,sofa:1,labbench:1,morguefridge:1,autopsy:1,bookcase:1,chiefdesk:1,bench:1}?[2,1]:fp);
  if(r?.type==='reception'&&k==='chair_office'){for(const o of g.children){if(!o.isMesh)continue;if(Math.abs(o.scale.y-.5)<.001&&Math.abs(o.scale.z-.07)<.001)o.position.z-=.145;if(Math.abs(o.scale.y-.08)<.001&&Math.abs(o.scale.z-.44)<.001)o.scale.z=.56}}
- const yaw=placeYaw(t,r);const piv=new THREE.Group();piv.position.set(t.x+fp[0]/2,0,t.y+fp[1]/2);piv.rotation.y=yaw;g.position.set(-nf[0]/2,0,-nf[1]/2);piv.add(g);root.add(piv);
+ const yaw=r?.type==='gp'&&k==='cabinet'?0:placeYaw(t,r);const piv=new THREE.Group();piv.position.set(t.x+fp[0]/2,0,t.y+fp[1]/2);piv.rotation.y=yaw;g.position.set(-nf[0]/2,0,-nf[1]/2);piv.add(g);root.add(piv);
  g.traverse(o=>{if(o.isMesh&&o.name){(dyn.parts[o.name]??=[]).push(o);o.userData.keep=1}});dyn.items.push({t,piv,k});return piv}
 function buildStatic(){if(ST){scene.remove(ST);ST.traverse(o=>{if(o.isMesh&&o.userData.own)o.geometry.dispose()})}DYN.clear();ST=new THREE.Group();const live=new THREE.Group();ST.add(live);
- // пол
- const P=[],C=[],PR=[],CR=[],UR=[];
- const pushQ=(arrP,arrC,u,v,col,y=0)=>{arrP.push(u,y,v,u,y,v+1,u+1,y,v+1,u,y,v,u+1,y,v+1,u+1,y,v);for(let i=0;i<6;i++)arrC.push(col.r,col.g,col.b)};
- const grass=hex(0x86b46a),grass2=hex(0x7aa960),path=hex(0xbab3a6),corr=hex(0xd9c9a8),corr2=hex(0xcbb995);
- for(let v=-8;v<S.h+8;v++)for(let u=-8;u<S.w+8;u++){const inMap=u>=0&&v>=0&&u<S.w&&v<S.h&&!isHole(u,v);let c,rec=false;
-  if(!inMap){c=Math.abs(u-S.ent.x)<1&&v>=S.h?path:((u+v)&1?grass:grass2)}else{const r=roomAt(u,v);if(r&&r.type==='reception'){c=hex(0xf3efe6);rec=true}else c=r?(typeof FLOORS!=='undefined'&&FLOORS[r.type]?hex(FLOORS[r.type][1]).multiplyScalar(.92):mixW(D.rooms[r.type].color||"#ccc",.15)).multiplyScalar((u+v)&1?1:.9):((u+v)&1?corr:corr2)}
-  if(rec){pushQ(PR,CR,u,v,c);UR.push(0,0,0,1,1,1,0,0,1,1,1,0)}else pushQ(P,C,u,v,c)}
- const mkFloor=(pos,col,uv,mat,shadow=true)=>{const fg=new THREE.BufferGeometry();fg.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));fg.setAttribute('color',new THREE.Float32BufferAttribute(col,3));if(uv)fg.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));fg.computeVertexNormals();const m=new THREE.Mesh(fg,mat);m.userData.own=1;m.receiveShadow=shadow;ST.add(m);return m};
- mkFloor(P,C,null,new THREE.MeshLambertMaterial({vertexColors:true}));
- if(PR.length)mkFloor(PR,CR,UR,new THREE.MeshStandardMaterial({vertexColors:true,map:TEX.recFloor,roughness:.48,metalness:0}));
+ // The public floor reads as one surface; the entrance lanes and room floors provide the contrast.
+ const exterior={pos:[],col:[],uv:[]},hall={pos:[],col:[],uv:[]},reception={pos:[],col:[],uv:[]},consult={pos:[],col:[],uv:[]};
+ function tile(layer,x,z,color){
+  layer.pos.push(x,0,z,x,0,z+1,x+1,0,z+1,x,0,z,x+1,0,z+1,x+1,0,z);
+  layer.uv.push(0,0,0,1,1,1,0,0,1,1,1,0);
+  for(let i=0;i<6;i++)layer.col.push(color.r,color.g,color.b);
+ }
+ const thresholds=new Set();
+ for(const room of S.rooms){
+  if(room.par||!['gp','reception'].includes(room.type))continue;
+  const door=doorOut(room),[dx,dz]=DIRS[room.side];
+  for(let i=0;i<2;i++)thresholds.add(`${door.x+dx*i},${door.y+dz*i}`);
+ }
+ for(let z=-8;z<S.h+8;z++)for(let x=-8;x<S.w+8;x++){
+  const inMap=x>=0&&z>=0&&x<S.w&&z<S.h&&!isHole(x,z);
+  if(!inMap){
+   const entrance=z>=S.h&&Math.abs(x-S.ent.x)<=1;
+   const shade=Math.cos(x*.59+z*.83)*.022+Math.sin(x*.21-z*.42)*.035;
+   tile(exterior,x,z,entrance?hex(0xa9a79c):hex(0x789666).multiplyScalar(1+shade));
+   continue;
+  }
+  const room=roomAt(x,z);
+  if(room?.type==='reception')tile(reception,x,z,hex(0xf3efe6));
+  else if(room?.type==='gp')tile(consult,x,z,hex(0xd7e2d6));
+  else if(room){
+   const tint=typeof FLOORS!=='undefined'&&FLOORS[room.type]?hex(FLOORS[room.type][1]):mixW(D.rooms[room.type].color||'#ccc',.15);
+   tile(exterior,x,z,tint.multiplyScalar((x+z)&1?1:.92));
+  }else{
+   const lane=thresholds.has(`${x},${z}`)||(Math.abs(x-S.ent.x)<=1&&z>=S.h-4);
+   const shade=((x*13+z*7)%5)*.008;
+   tile(hall,x,z,hex(lane?0xa7bdb4:0xe0d8c9).multiplyScalar(1-shade));
+  }
+ }
+ function addFloor({pos,col,uv},material){
+  if(!pos.length)return;
+  const geo=new THREE.BufferGeometry();
+  geo.setAttribute('position',new THREE.Float32BufferAttribute(pos,3));
+  geo.setAttribute('color',new THREE.Float32BufferAttribute(col,3));
+  geo.setAttribute('uv',new THREE.Float32BufferAttribute(uv,2));
+  geo.computeVertexNormals();
+  const mesh=new THREE.Mesh(geo,material);
+  mesh.userData.own=1;
+  mesh.receiveShadow=true;
+  ST.add(mesh);
+ }
+ addFloor(exterior,clinicExteriorFloor);
+ addFloor(hall,mat(0xffffff,{vertexColors:true,map:TEX.recFloor,rough:.71}));
+ addFloor(reception,mat(0xffffff,{vertexColors:true,map:TEX.recFloor,rough:.48}));
+ addFloor(consult,mat(0xffffff,{vertexColors:true,map:TEX.recFloor,rough:.65}));
  // стены (задние высокие, передние — вырез), двери
  const WG=[],RWG=[];let recWall=false;const box=(w,h,d,x,y,z,col)=>{const g=new THREE.BoxGeometry(w,h,d);g.translate(x+w/2,y+h/2,z+d/2);const n=g.attributes.position.count,cc=new Float32Array(n*3);for(let i=0;i<n;i++){cc[i*3]=col.r;cc[i*3+1]=col.g;cc[i*3+2]=col.b}g.setAttribute('color',new THREE.BufferAttribute(cc,3));(recWall?RWG:WG).push(g)};
  const HB=+(Q.get('wall')||1.45),HF=.32,TH=.22,cap=hex(0x5b4636),winc=hex(0xa9d8f5);
- for(const r of S.rooms){const dyn={parts:{},items:[],r};DYN.set(r.id,dyn);if(!r.par){recWall=r.type==='reception';const wc=recWall?hex(0xeee9de):mixW(D.rooms[r.type].color||"#ccc",.45);const RH=recWall?1.95:HB,RC=recWall?hex(0xb7c8cd):cap;
+ for(const r of S.rooms){const dyn={parts:{},items:[],r};DYN.set(r.id,dyn);if(!r.par){recWall=r.type==='reception';const consultWall=r.type==='gp',clinicWall=recWall||consultWall;
+  const wc=hex(recWall?0xeee9de:consultWall?0xe9e7dd:D.rooms[r.type].color||'#ccc'),RH=recWall?1.95:consultWall?Math.max(HB,1.78):HB;
+  if(!clinicWall)wc.lerp(new THREE.Color(0xffffff),.45);
+  const RC=recWall?hex(0xb7c8cd):consultWall?hex(0xa6b6ab):cap;
+  const trim=hex(0x7e9d91);
   for(let y=r.y;y<r.y+r.h;y++)for(let x=r.x;x<r.x+r.w;x++){const isDoor=x===r.door.x&&y===r.door.y;if(!isWall(r,x,y)&&!isDoor)continue;
    const sT=y===r.y,sL=x===r.x,sB=y===r.y+r.h-1,sR=x===r.x+r.w-1;
    if(isDoor){const back=r.side>=2;const hz=r.side===0||r.side===2;// дверь в стене вдоль X (hz) или вдоль Z
     if(r.type==='reception'&&!back){const ox=r.side===1?x+1-TH:x,oz=r.side===0?y+1-TH:y;const portal=receptionEntrance();if(hz)portal.position.set(x,0,oz+TH/2);else{portal.position.set(ox+TH/2,0,y+1);portal.rotation.y=Math.PI/2}live.add(portal);continue}
     const H=back?RH:HF,ox=r.side===3?x:r.side===1?x+1-TH:x,oz=r.side===2?y:r.side===0?y+1-TH:y;
+    if(consultWall){
+     const sign=consultSign();
+     sign.position.set(hz?x+1.30:ox+TH+.02,back?1.18:HF+.045,hz?oz+TH+.02:y+.56);
+     if(!hz)sign.rotation.y=Math.PI/2;
+     if(back||x<r.x+r.w-1)live.add(sign);
+    }
     if(hz){box(.12,H,TH,x,0,oz,wc);box(.12,H,TH,x+.88,0,oz,wc);if(back&&RH>2.1)box(1,RH-2.05,TH,x,2.05,oz,wc)}else{box(TH,H,.12,ox,0,y,wc);box(TH,H,.12,ox,0,y+.88,wc);if(back&&RH>2.1)box(TH,RH-2.05,1,ox,2.05,y,wc)}
     if(back){const leaf=new THREE.Group();const lm=new THREE.Mesh(new THREE.BoxGeometry(.74,2,.05),mat(0x8fbfd8));lm.userData.own=1;lm.position.set(.38,1,0);lm.scale.y=Math.min(1,(RH-.03)/2);lm.position.y=lm.scale.y;leaf.add(lm);const hd=new THREE.Mesh(new THREE.SphereGeometry(.04,8,6),mat(0xd4af37));hd.position.set(.68,1,.05);leaf.add(hd);
      if(hz){leaf.position.set(x+.13,0,oz+TH/2)}else{leaf.position.set(ox+TH/2,0,y+.87);leaf.rotation.y=Math.PI/2}leaf.userData.base=leaf.rotation.y;live.add(leaf);dyn.leaf=leaf}
     continue}
    if(sT||sL){
     if(sT&&sL){box(TH,RH,1,x,0,y,wc);box(TH,.04,1,x,RH,y,RC);if(recWall)box(.025,.075,1,x+TH,0,y,wc)}
-    // Reception-only true window openings, with inset sky/glazing and physical reveals.
-    const top=sT,hasWin=recWall&&!sT?(!sB&&(x+y)%2===0):recWall&&!sL&&!sR&&(x+y)%2===0;
-    if(recWall&&hasWin){
+    const top=sT;
+    const hasWin=recWall?(!sT?(!sB&&(x+y)%2===0):!sL&&!sR&&(x+y)%2===0):
+     consultWall&&(top?x===r.x+r.w-2:!sB&&y===r.y+1);
+    if(hasWin){
      const wy=.58,wh=RH-.78;
      if(top){box(.09,RH,TH,x,0,y,wc);box(.09,RH,TH,x+.91,0,y,wc);box(.82,wy,TH,x+.09,0,y,wc);box(.82,RH-wy-wh,TH,x+.09,wy+wh,y,wc)}
      else{box(TH,RH,.09,x,0,y,wc);box(TH,RH,.09,x,0,y+.91,wc);box(TH,wy,.82,x,0,y+.09,wc);box(TH,RH-wy-wh,.82,x,wy+wh,y+.09,wc)}
      const win=receptionWindow(.82,wh);if(top)win.position.set(x+.5,wy,y+TH);else{win.position.set(x+TH,wy,y+.5);win.rotation.y=Math.PI/2}live.add(win);
-    }else if(top){box(1,RH,TH,x,0,y,wc);if(!recWall&&!sL&&!sR&&(x+y)%3===0)box(.62,Math.min(.7,HB-.95),.02,x+.2,HB>2?1.05:.75,y+TH,winc)}
-    else{box(TH,RH,1,x,0,y,wc);if(!recWall&&!sB&&(x+y)%3===0)box(.02,Math.min(.7,HB-.95),.6,x+TH,HB>2?1.05:.75,y+.2,winc)}
-    if(top){box(1,.04,TH,x,RH,y,RC);if(recWall)box(1,.075,.025,x,0,y+TH,wc)}else{box(TH,.04,1,x,RH,y,RC);if(recWall)box(.025,.075,1,x+TH,0,y,wc)}
+    }else if(top){box(1,RH,TH,x,0,y,wc);if(!clinicWall&&!sL&&!sR&&(x+y)%3===0)box(.62,Math.min(.7,HB-.95),.02,x+.2,HB>2?1.05:.75,y+TH,winc)}
+    else{box(TH,RH,1,x,0,y,wc);if(!clinicWall&&!sB&&(x+y)%3===0)box(.02,Math.min(.7,HB-.95),.6,x+TH,HB>2?1.05:.75,y+.2,winc)}
+    if(top){box(1,.04,TH,x,RH,y,RC);if(clinicWall)box(1,.075,.025,x,0,y+TH,consultWall?trim:wc)}else{box(TH,.04,1,x,RH,y,RC);if(clinicWall)box(.025,.075,1,x+TH,0,y,consultWall?trim:wc)}
+    if(consultWall&&!hasWin){
+     if(top)box(1,.075,.018,x,.82,y+TH,trim);
+     else box(.018,.075,1,x+TH,.82,y,trim);
+     if(top&&x===r.x+1){
+      const poster=consultPoster();
+      poster.position.set(x+.5,.96,y+TH+.025);
+      live.add(poster);
+     }
+    }
    }
 
    if(sB){box(1,HF,TH,x,0,y+1-TH,wc);box(1,.03,TH,x,HF,y+1-TH,RC)}
@@ -267,6 +334,11 @@ function buildStatic(){if(ST){scene.remove(ST);ST.traverse(o=>{if(o.isMesh&&o.us
   if(r.type==='reception'){const sky=new THREE.PointLight(0xf0f7ff,10.0,6,2);sky.position.set(r.x+r.w*.45,2.8,r.y+r.h*.45);live.add(sky)}
   roomLay(r);for(const t of r.it)placeFurn(t,r,live,dyn)}
  recWall=false;const cd={parts:{},items:[]};DYN.set('corr',cd);for(const t of S.items)placeFurn(t,null,live,cd);
+ for(const x of [S.ent.x-2.4,S.ent.x+3.4]){
+  const planter=clinicPlanter();
+  planter.position.set(x,0,S.h+1.85);
+  live.add(planter);
+ }
  // ограда участка
  const fc=hex(0xe9e2d2);for(let u=-1;u<=S.w;u++){if(Math.abs(u-S.ent.x)<1)continue;box(1,.5,.12,u,0,-1.1,fc)}for(let v=-1;v<S.h;v++){box(.12,.5,1,-1.1,0,v,fc)}
  if(RWG.length){const geo=mergeGeometries(RWG);RWG.forEach(g=>g.dispose());const m=new THREE.Mesh(geo,new THREE.MeshStandardMaterial({vertexColors:true,roughness:.88}));m.userData.own=1;m.castShadow=m.receiveShadow=true;ST.add(m)}
@@ -292,13 +364,31 @@ function poseOf(e,isStaff){const st={act:'idle',x:e.x+.5,z:e.y+.5,yaw:null,lie:0
   if(v.pose==='lie'){const b=bedAt(v.sp);const fp=b?b.t.fp||fpOf(b.t.k):[1,2];st.yaw=fp[1]>=fp[0]?0:Math.PI/2;if(b){const dy=DYN.get(b.r.id),it=dy&&dy.items.find(i=>i.t===b.t);if(it)st.yaw=it.piv.rotation.y}if(b){st.x=b.t.x+fp[0]/2;st.z=b.t.y+fp[1]/2}st.bed=b;st.lie=v.ph==='sat'?1:v.ph==='down'?k:1-k;st.act='lie';
    if(st.lie<1){const d0=[e.x+.5,e.y+.5];st.x=d0[0]+(st.x-d0[0])*st.lie;st.z=d0[1]+(st.z-d0[1])*st.lie}return st}
   st.yaw=dirYaw(v.sp.dir!=null?v.sp.dir:e.dir);st.act=v.ph==='sat'?'sit':v.ph==='down'?'sitdown':'situp';st.k=k;
-  if(isStaff&&e.state==='work'&&v.ph==='sat'){const r=roomOf(e)||S.rooms.find(r=>r.id===e.room);if(r&&r.type in WORKT){const busy=S.pats.some(p=>p.room===r.id&&(p.state==='treat'||p.state==='enter'));const queued=S.pats.some(p=>p.room===r.id||(p.state==='queue'&&p.qr===r.id));
-   if(e.type==='receptionist'&&r.type==='reception'){const pat=S.pats.find(p=>p.room===r.id&&(p.state==='treat'||p.state==='enter'||p.state==='queue'));
-    // phased: approach/greet → type at keyboard → calm
-    if(busy&&pat){const q=typeof procQ==='function'?procQ(pat):(pat.tT?1-pat.t/pat.tT:0.5);st.layer=q<.18?'greet':(q<.9?'deskType':null);st.look=pat;st.talk=q<.22}
-    else if(queued&&!busy){const near=S.pats.find(p=>p.room===r.id&&Math.hypot(p.x-(r.sp?.patient?.x??e.x),p.y-(r.sp?.patient?.y??e.y))<3.2);st.layer=near?'greet':null;st.look=near||null;st.talk=!!near}
-    else{st.layer=null;st.talk=false}
-   }else{st.layer=busy||queued?'write':null;st.talk=busy}}}
+  if(isStaff&&e.state==='work'&&v.ph==='sat'){
+   const r=roomOf(e);
+   if(r&&r.type in WORKT){
+    const pat=r.busy==null?null:S.pats.find(p=>p.id===r.busy);
+    if(e.type==='receptionist'&&r.type==='reception'){
+     if(pat?.state==='enter'&&Math.hypot(pat.x-r.sp.patient.x,pat.y-r.sp.patient.y)<1.65){
+      st.layer='greet';
+      st.look=pat;
+     }else if(pat?.state==='treat'){
+      const q=procQ(pat);
+      if(q<.34){
+       st.layer='greet';
+       st.look=pat;
+       const nod=THREE.MathUtils.clamp((q-.06)/.25,0,1);
+       st.recNod=Math.sin(Math.PI*nod);
+      }else if(q<.85)st.layer='deskType';
+     }
+    }else{
+     const busy=S.pats.some(p=>p.room===r.id&&(p.state==='treat'||p.state==='enter'));
+     const queued=S.pats.some(p=>p.room===r.id||(p.state==='queue'&&p.qr===r.id));
+     st.layer=busy||queued?'write':null;
+     st.talk=busy;
+    }
+   }
+  }
   if(!isStaff&&e.state==='treat')st.talk=true;return st}
  const an39=!isStaff&&CH.get(e.id)?.anatomicalGait;// Phase39e: anatomical patients do object interactions (wc lid, flush, hand-wash) on the anatomical standing stance (treatp: Idle_Loop lower body, planted feet, gait stop/start/turn contracts) with a procedural upper-body reach layer instead of the full-body Interact clip (legs/pelvis not grounded for these rigs).
  if(e.oa){st.act=an39?'treatp':'interact';if(an39){st.layer='reach39';st.reachT=reachTarget39(e,dirYaw(e.oa.d))}st.yaw=dirYaw(e.oa.d);return st}
@@ -396,7 +486,7 @@ function recDeskArms(c,p,e){
   const H=upper.getWorldPosition(new THREE.Vector3()),K=lower.getWorldPosition(new THREE.Vector3()),F=hand.getWorldPosition(new THREE.Vector3());
   // Desk-supported rest is the same reachable arm manifold as typing. No high-wrist/lap
   // crossover and no near-zero shoulder→wrist distance during processing transitions.
-  const work=new THREE.Vector3(-.5+sign*(.10+.015*(1-type)),.97,-.74-.025*(1-type)).applyMatrix4(desk.piv.matrixWorld);
+  const work=new THREE.Vector3(-.5+sign*(.10+.07*(1-type)),.97-.025*(1-type),-.74-.09*(1-type)).applyMatrix4(desk.piv.matrixWorld);
   const target=work;
   const a=H.distanceTo(K),b=K.distanceTo(F),d=THREE.MathUtils.clamp(H.distanceTo(target),Math.abs(a-b)+.002,a+b-.006);
   const axis=target.clone().sub(H).normalize();target.copy(H).addScaledVector(axis,d);
@@ -672,8 +762,20 @@ function gaitCarryApply21(c,raw){
 // A real stop can raise the trunk before the rear support has lifted. Keep its actual toe patch, roll the heel, then release at the authored stop swing.
 function gaitStopSupport25(c,plan,s,raw){
  if(s!==plan.stance||plan.age>=.30)return false;const start=plan.feet[s],V=THREE.Vector3,th=c.b['thigh_'+s],ca=c.b['calf_'+s],ft=c.b['foot_'+s],H=th.getWorldPosition(new V()),K=ca.getWorldPosition(new V()),F=ft.getWorldPosition(new V()),point=v=>gaitScaled28(c)?c.m.worldToLocal(v.clone()):v,limit=point(H).distanceTo(point(K))+point(K).distanceTo(point(F))-(gaitScaled28(c)?.003*Math.max(...c.m.scale.toArray())/(Math.min(...c.m.scale.toArray())**2):.003),d=point(H).distanceTo(point(start.p));let hold=c.gaitStop25?.plan===plan?c.gaitStop25:null;
- if(!hold){if(d<=limit)return false;const previous=c.gaitLastFeet?.[s];let patch=start.support25||(previous&&previous.p.distanceTo(start.p)<.001&&previous.q.angleTo(start.q)<.001?previous.support25:null);if((!patch||patch.ids.length<3)&&start.placed39){const k=start.placed39.skin,dr=start.placed39.drop,ids=[],anchor=new V();for(let i=0;i<k.points.length;i++){const v=k.points[i],y=v.y+dr;if(y>=-.000001&&y<=.008&&v.x*Math.sin(c.yaw)+v.z*Math.cos(c.yaw)>k.front-.05){ids.push(k.list[i]);anchor.add(new V(v.x,y,v.z))}}if(ids.length>=3){patch={ids,anchor:anchor.multiplyScalar(1/ids.length)};c.gaitPlacedSupport39=(c.gaitPlacedSupport39||0)+1}}if(!patch||patch.ids.length<3)throw Error('Stop needs actual forefoot support '+c.role+' '+s);const z={side:s,ids:patch.ids,anchor:patch.anchor.clone(),footP:start.p.clone(),footQ:start.q.clone(),ballQ:start.ball.clone(),offset:new V()};hold=c.gaitStop25={plan,z};plan.heelSupport25={side:s,initialDistance:d,protectedLimit:limit,actualToeIds:patch.ids.length};}
- const z=hold.z,g={p:raw.p,q:start.q,ball:start.ball},landing=gaitHeelPlan22(c,z,g,z.ballQ);if(!gaitAimFoot(c,s,landing.T,landing.q,z.ballQ))throw Error('Unreachable actual stop toe-off '+c.role+' '+s);plan.feet[s]=gaitFeet(c)[s];plan.heelSupport25.extraHeelDegrees=landing.extra*180/Math.PI;plan.heelSupport25.actualTarget=landing.T.toArray();return true;
+ if(!hold){if(d<=limit)return false;const previous=c.gaitLastFeet?.[s];let patch=start.support25||(previous&&previous.p.distanceTo(start.p)<.001&&previous.q.angleTo(start.q)<.001?previous.support25:null);if((!patch||patch.ids.length<3)&&start.placed39){const k=start.placed39.skin,dr=start.placed39.drop,ids=[],anchor=new V();for(let i=0;i<k.points.length;i++){const v=k.points[i],y=v.y+dr;if(y>=-.000001&&y<=.008&&v.x*Math.sin(c.yaw)+v.z*Math.cos(c.yaw)>k.front-.05){ids.push(k.list[i]);anchor.add(new V(v.x,y,v.z))}}if(ids.length>=3){patch={ids,anchor:anchor.multiplyScalar(1/ids.length)};c.gaitPlacedSupport39=(c.gaitPlacedSupport39||0)+1}}if(!patch||patch.ids.length<3)return false;const z={side:s,ids:patch.ids,anchor:patch.anchor.clone(),footP:start.p.clone(),footQ:start.q.clone(),ballQ:start.ball.clone(),offset:new V()};hold=c.gaitStop25={plan,z};plan.heelSupport25={side:s,initialDistance:d,protectedLimit:limit,actualToeIds:patch.ids.length};}
+ const z=hold.z,g={p:raw.p,q:start.q,ball:start.ball};
+ let landing;
+ try{landing=gaitHeelPlan22(c,z,g,z.ballQ)}
+ catch(err){
+  if(!err.message.startsWith('No reachable comfortable toe-off heel roll'))throw err;
+  // Let the regular stop step bring the foot to a reachable position.
+  return false;
+ }
+ if(!gaitAimFoot(c,s,landing.T,landing.q,z.ballQ))return false;
+ plan.feet[s]=gaitFeet(c)[s];
+ plan.heelSupport25.extraHeelDegrees=landing.extra*180/Math.PI;
+ plan.heelSupport25.actualTarget=landing.T.toArray();
+ return true;
 }
 // Phase29: native Jog has a short real stance. Preserve actual material contact on every cycle, release only when the actual authored shoe lifts.
 function gaitJogContacts29(c,p,raw){if(c.walkName!=='Jog_Fwd_Loop')return;if(p.act!=='walk'||(c.gaitActualSpeed||0)<.08||c.ent.vs||c.gaitTransitionPlan||c.gaitTurnPlan){c.gaitJogContacts29=null;return}const states=c.gaitJogContacts29||(c.gaitJogContacts29={});for(const side of ['l','r']){if(c.gaitCarry21?.side===side){delete states[side];continue}let z=states[side],actualLanding33=false;if(z){const managed=c.gaitCarry21;c.gaitCarry21=z;gaitCarryApply21(c,raw);z=states[side]=c.gaitCarry21;c.gaitCarry21=managed;if(z&&c.jogMotion31&&z.stage==='swing'){const a=gaitContact25(c,side);z.sawAir33||=a.min>.04;if(z.sawAir33&&a.min<=.008&&a.min<(z.previousMin33??Infinity)){actualLanding33=true;z=states[side]=null;c.actualLanding33={side,min:a.min,clipTime:c.A[c.walkName].time,reason:'first descending real shoe contact, not sampled phase end'};}else z.previousMin33=a.min;}}if(!z){if(!actualLanding33&&raw[side].minY>.008)continue;let a=gaitContact25(c,side);if(a.min>.008)continue;if(a.min<.00299){const f=gaitFeet(c)[side],T=f.p.clone();T.y+=.003-a.min;if(!gaitAimFoot(c,side,T,f.q,f.ball))throw Error('Unreachable actual Jog contact landing '+side);a=gaitContact25(c,side)}const contact=c.jogMotion31?gaitRegion32(c,a):'flat',patch=(contact==='flat'?a.pts:contact==='toe'?a.toe:contact==='ball32'?a.ball32:a.heel).filter(v=>v.v.y>=-.000001&&v.v.y<=.008);if(patch.length<3)throw Error('Missing actual plain Jog sole contact '+side);const ids=patch.map(({m,i})=>({m,i}));states[side]={side,ids,flat29:!c.jogMotion31,contact25:contact,managed25:contact==='heel',anchor:gaitPatch21(c,ids),ballQ:gaitOrientation28(c,c.b['ball_'+side]),footQ:gaitOrientation28(c,c.b['foot_'+side]),footP:c.b['foot_'+side].getWorldPosition(new THREE.Vector3()),offset:new THREE.Vector3(),stage:'support',lastTime:c.A[c.walkName].time,phase:0};states[side].releaseArmed33=raw[side].minY<=.008;gaitSeedSupport32(c,states[side]);}}}
@@ -725,7 +827,17 @@ function gaitTransition16(c,p,dt){
  const turnNeeded=c.gaitHeadingReady17!==false&&(Math.abs(angd(c.gaitYawGoal,c.yaw))>.055||Math.abs(angd(c.yaw,c.gaitLastYaw??c.yaw))>.004);
  if(!c.gaitTransitionPlan&&!moving&&!was&&(turnNeeded||c.gaitTurnPlan)){
   if(!c.gaitTurnPlan)gaitTurnBegin16(c,c.gaitLastFeet||gaitFeet(c));const m=c.gaitTurnPlan,ease=u=>{u=THREE.MathUtils.clamp(u,0,1);return u*u*(3-2*u)};m.age+=dt;
-  if(m.release!=null){m.release+=dt;const raw=gaitFeet(c),u=ease(m.release/.15);for(const s of ['l','r']){const f=m.feet[s],g=raw[s];gaitAimFoot(c,s,f.p.clone().lerp(g.p,u),f.q.clone().slerp(g.q,u),f.ball.clone().slerp(g.ball,u))}if(turnNeeded){m.release=null;m.age=0;m.goal=gaitTurnGoal16(c,m.swing)}else if(m.release>=.15)c.gaitTurnPlan=null;
+  if(m.release==null){
+   const error=Math.abs(angd(c.gaitYawGoal,c.yaw));
+   if(m.turnProgress==null||Math.abs(angd(c.gaitYawGoal,m.progressGoal))>.10||error<m.turnProgress-.055){
+    m.turnProgress=error;
+    m.progressGoal=c.gaitYawGoal;
+    m.stalled=0;
+   }else m.stalled+=dt;
+   // On tight corners a planted foot can prevent all yaw progress. Blend out the lock.
+   if(m.stalled>.75){m.release=0;m.freeTurn=true}
+  }
+  if(m.release!=null){m.release+=dt;const raw=gaitFeet(c),u=ease(m.release/.15);for(const s of ['l','r']){const f=m.feet[s],g=raw[s];gaitAimFoot(c,s,f.p.clone().lerp(g.p,u),f.q.clone().slerp(g.q,u),f.ball.clone().slerp(g.ball,u))}if(turnNeeded&&!m.freeTurn){m.release=null;m.age=0;m.goal=gaitTurnGoal16(c,m.swing)}else if(m.release>=.15&&(!m.freeTurn||Math.abs(angd(c.gaitYawGoal,c.yaw))<=.055))c.gaitTurnPlan=null;
   }else{const u=Math.min(1,m.age/m.duration),v=ease(u);for(const s of ['l','r']){const f=m.feet[s],g=s===m.swing?m.goal:f,T=f.p.clone().lerp(g.p,v);if(s===m.swing)T.y+=.045*Math.sin(Math.PI*u);gaitAimFoot(c,s,T,f.q.clone().slerp(g.q,v),f.ball.clone().slerp(g.ball,v))}
    if(u>=1){m.feet[m.swing]=m.goal;m.steps++;c.gaitTurnSteps=(c.gaitTurnSteps||0)+1;m.swing=m.swing==='l'?'r':'l';m.age=0;m.bodyFrom=c.yaw;m.bodyTo=c.yaw+THREE.MathUtils.clamp(angd(c.gaitYawGoal,c.yaw),-.4,.4);const goal=gaitTurnGoal16(c,m.swing,m.bodyTo),other=m.swing==='l'?'r':'l',og=gaitTurnGoal16(c,other);m.goal=goal;if(!turnNeeded&&m.feet[m.swing].p.distanceTo(goal.p)<.018&&m.feet[other].p.distanceTo(og.p)<.018&&m.feet[m.swing].q.angleTo(goal.q)<.08&&m.feet[other].q.angleTo(og.q)<.08)m.release=0;}
   }
@@ -753,12 +865,12 @@ function seatAisles27(sp){const f=seatFrame27(sp),fx=Math.sin(f.yaw),fz=Math.cos
  return [[Math.round(fx),Math.round(fz),0],[Math.round(rx),Math.round(rz),1],[-Math.round(rx),-Math.round(rz),-1]].map(([dx,dy,side])=>{const x=sp.x+dx,y=sp.y+dy,join=null;return {x,y,join,frame:f}}).filter(a=>walk(a.x,a.y));}
 function seatRouteLength27(origin,route){let d=0,last=origin;for(const n of route){d+=Math.hypot(n.x-last.x,n.y-last.y);last=n}return d}
 const seatGoTo27=window.goTo;
-window.goTo=function(e,x,y){const c=seatActor27(e);if(!c)return seatGoTo27(e,x,y);
+window.goTo=function(e,x,y,avoid){const c=seatActor27(e);if(!c)return seatGoTo27(e,x,y,avoid);
  const sp=S.rooms.map(r=>r.sp?.patient).find(s=>s?.pose==='sit'&&s.x===x&&s.y===y);
- if(sp){const routes=[];for(const a of seatAisles27(sp)){const route=path(e.x,e.y,a.x,a.y);if(route===null)continue;const last=route[route.length-1]||e;if(Math.hypot(last.x-a.x,last.y-a.y)>.00001)route.push({x:a.x,y:a.y});if(a.join)route.push(a.join);route.push({x:a.frame.x,y:a.frame.y});routes.push({route,a,d:seatRouteLength27(e,route)})}routes.sort((a,b)=>a.d-b.d);if(!routes.length)throw Error('No reachable physical chair approach '+c.role);const best=routes[0];e.path=best.route;c.seatNav27={kind:'approach',spot:{...sp},frame:best.a.frame,aisle:best.a};return true;}
+ if(sp){const routes=[];for(const a of seatAisles27(sp)){const route=path(e.x,e.y,a.x,a.y,avoid);if(route===null)continue;const last=route[route.length-1]||e;if(Math.hypot(last.x-a.x,last.y-a.y)>.00001)route.push({x:a.x,y:a.y});if(a.join)route.push(a.join);route.push({x:a.frame.x,y:a.frame.y});routes.push({route,a,d:seatRouteLength27(e,route)})}routes.sort((a,b)=>a.d-b.d);if(!routes.length){if(avoid){e.path=[];return false}throw Error('No reachable physical chair approach '+c.role)}const best=routes[0];e.path=best.route;c.seatNav27={kind:'approach',spot:{...sp},frame:best.a.frame,aisle:best.a};return true;}
  const held=c.seatNav27,atStand=held&&Math.hypot(e.x-held.frame.x,e.y-held.frame.y)<.00001;
- if(atStand&&['exit','departure'].includes(held.kind)){const routes=[];for(const a of seatAisles27(held.spot)){const tail=path(a.x,a.y,x,y);if(tail===null)continue;const route=[];if(a.join)route.push(a.join);route.push({x:a.x,y:a.y},...tail);routes.push({route,a,d:seatRouteLength27(e,route)})}routes.sort((a,b)=>a.d-b.d);if(!routes.length)throw Error('No reachable physical chair departure '+c.role);e.path=routes[0].route;c.seatNav27={...held,kind:'departure',aisle:routes[0].a};return true;}
- return seatGoTo27(e,x,y);
+ if(atStand&&['exit','departure'].includes(held.kind)){const routes=[];for(const a of seatAisles27(held.spot)){const tail=path(a.x,a.y,x,y,avoid);if(tail===null||avoid?.has(a.y*S.w+a.x))continue;const route=[];if(a.join)route.push(a.join);route.push({x:a.x,y:a.y},...tail);routes.push({route,a,d:seatRouteLength27(e,route)})}routes.sort((a,b)=>a.d-b.d);if(!routes.length){if(avoid){e.path=[];return false}throw Error('No reachable physical chair departure '+c.role)}e.path=routes[0].route;c.seatNav27={...held,kind:'departure',aisle:routes[0].a};return true;}
+ return seatGoTo27(e,x,y,avoid);
 };
 // Phase39d toilet arrival (wc analogue of the seatNav27 chair approach): the sim stands the patient on the tile in front of the toilet
 // facing it (lid), then takeSeat() teleports the entity onto the toilet. For anatomical patients the seating is deferred until the
@@ -831,7 +943,7 @@ function updChar(e,isStaff,dt,now){let c=CH.get(e.id);if(c&&!isStaff&&e.healed&&
  if(p.act==='v43lie'){if(!c.v43piv39){c.m.updateMatrixWorld(true);const hw=c.b.pelvis.getWorldPosition(new THREE.Vector3()),X=c.tilt.worldToLocal(hw).sub(c.m.position);c.v43piv39={X,gy0:c.actionAnatomy24?c.gy:c.v43gy??.1}}const {X,gy0}=c.v43piv39,u=p.u,th=-Math.PI/2*u,R=(y,z,a)=>[y*Math.cos(a)-z*Math.sin(a),y*Math.sin(a)+z*Math.cos(a)],Lb=LIESUP39.bed-lieBack39(c),r1=R(X.y-.88,X.z,-Math.PI/2),W0=[gy0+X.y,X.z],W1=[Lb+r1[0],r1[1]],W=[W0[0]+(W1[0]-W0[0])*u,W0[1]+(W1[1]-W0[1])*u],ru=R(X.y-.88*u,X.z,th);c.tilt.rotation.x=th;c.tilt.position.set(0,W[0]-ru[0],W[1]-ru[1]);c.v43pivU39=u}else if(c.v43piv39&&p.act!=='lie')c.v43piv39=null;
  // эффекты процедур
  c.fx=procFx(e,c,p,now);
- c.layer.write=p.layer==='write'?1:0;c.layer.exam=p.layer==='exam'?1:0;c.layer.phone=p.layer==='phone'?1:0;c.layer.operate=p.layer==='operate'?1:0;c.layer.deskType=p.layer==='deskType'?1:0;c.layer.greet=p.layer==='greet'?1:0;c.layer.reach39=p.layer==='reach39'?1:0;if(p.reachT)c.reachT39=p.reachT;c.lookPat=p.look||null;
+ c.layer.write=p.layer==='write'?1:0;c.layer.exam=p.layer==='exam'?1:0;c.layer.phone=p.layer==='phone'?1:0;c.layer.operate=p.layer==='operate'?1:0;c.layer.deskType=p.layer==='deskType'?1:0;c.layer.greet=p.layer==='greet'?1:0;c.layer.reach39=p.layer==='reach39'?1:0;if(p.reachT)c.reachT39=p.reachT;c.lookPat=p.look||null;c.recNod=p.recNod||0;
  c.shadow.visible=p.act!=='lie';const fade=e.state==='dead'&&!e.body?Math.max(0,1-e.t/3):1;if(fade!==c.alpha){c.alpha=fade;c.root.visible=fade>.02}
  if(c.nose)c.nose.material.emissiveIntensity=(Math.sin(now/180)>0)?1:0;
  v43Give(c,e,p,isStaff);v43MopPre(c,e,p,isStaff);
@@ -865,7 +977,13 @@ function legs(c,p,e,dt){if(c.actionAnatomy24&&['idle','walk','treatp','sit','sit
  if(e.vs?.pose==='sit'||w>.001||c.seatFeet24){const feet=gaitFeet(c),V=THREE.Vector3,Q=THREE.Quaternion,previous=c.seatFeet24;
  if(w>.001&&!previous){const from=c.gaitLastFeet||feet,dest={};for(const side of ['l','r']){const f=from[side],T=f.p.clone();T.y+=.003-f.minY;const local=c.root.worldToLocal(T.clone());local.x/=c.m.scale.x;const leg=c.seat24.legs[side],hip=leg.hip,vertical=hip[1]+c.seat24.vertical+seatH-.5-local.y,lateral=local.x-hip[0],sa39b=c.seatAnchor39&&c.seatAnchor39.vs===e.vs?c.seatAnchor39:null;let kn39=115,lift39=0,d2=leg.a*leg.a+leg.b*leg.b-2*leg.a*leg.b*Math.cos(kn39*Math.PI/180),h2=d2-vertical*vertical-lateral*lateral;// Phase39b high solid-front seat (bed edge, top .61): thighs rest along the mattress plane and the shins hang over the edge (feet dangle, no floor contact claimed) with a
 // 110 deg knee; only if that hanging foot would reach the floor is the foot planted (standard 115 deg solution).
-if(sa39b){const kn=110*Math.PI/180,dd=Math.sqrt(leg.a*leg.a+leg.b*leg.b-2*leg.a*leg.b*Math.cos(kn)),al=Math.asin(leg.b*Math.sin(kn)/dd),pl=Math.sqrt(Math.max(0,dd*dd-lateral*lateral)),vd=pl*Math.sin(al),hz=pl*Math.cos(al);if(vd<vertical){kn39=110;lift39=vertical-vd;h2=hz*hz}if((c.seat24.forward+hip[2]+Math.sqrt(Math.max(0,h2)))*c.m.scale.z<sa39b.front)throw Error('Bed-edge seat: hanging foot does not clear the bed front '+c.role+' '+side)}c.seatKnee39=kn39;c.seatLift39=lift39;if(h2<=0)throw Error('Seated landing has no anatomical solution '+c.role+' '+side);local.z=hip[2]+Math.sqrt(h2);const sp=e.vs.sp,sa39=c.seatAnchor39&&c.seatAnchor39.vs===e.vs?c.seatAnchor39:null,forward=new V(Math.sin(c.yaw),0,Math.cos(c.yaw)),right=new V(Math.cos(c.yaw),0,-Math.sin(c.yaw));dest[side]={p:(sa39?new V(sa39.x,0,sa39.z):new V(sp.x+.5,0,sp.y+.5)).addScaledVector(forward,(c.seat24.forward+local.z)*c.m.scale.z).addScaledVector(right,local.x*c.m.scale.x),q:f.q.clone(),ball:f.ball.clone()};dest[side].p.y=T.y+lift39;from[side]={...f,p:T}}
+if(sa39b){const kn=110*Math.PI/180,dd=Math.sqrt(leg.a*leg.a+leg.b*leg.b-2*leg.a*leg.b*Math.cos(kn)),al=Math.asin(leg.b*Math.sin(kn)/dd),pl=Math.sqrt(Math.max(0,dd*dd-lateral*lateral)),vd=pl*Math.sin(al),hz=pl*Math.cos(al);if(vd<vertical){kn39=110;lift39=vertical-vd;h2=hz*hz}if((c.seat24.forward+hip[2]+Math.sqrt(Math.max(0,h2)))*c.m.scale.z<sa39b.front)throw Error('Bed-edge seat: hanging foot does not clear the bed front '+c.role+' '+side)}c.seatKnee39=kn39;c.seatLift39=lift39;if(h2<=0){
+ // This stance is wider than the authored seated pose. Bring the foot under the knee.
+ const reach=Math.sqrt(Math.max(0,d2-lateral*lateral-.0064));
+ lift39=Math.max(lift39,vertical-reach);
+ h2=.0064;
+ c.seatLift39=lift39;
+}local.z=hip[2]+Math.sqrt(h2);const sp=e.vs.sp,sa39=c.seatAnchor39&&c.seatAnchor39.vs===e.vs?c.seatAnchor39:null,forward=new V(Math.sin(c.yaw),0,Math.cos(c.yaw)),right=new V(Math.cos(c.yaw),0,-Math.sin(c.yaw));dest[side]={p:(sa39?new V(sa39.x,0,sa39.z):new V(sp.x+.5,0,sp.y+.5)).addScaledVector(forward,(c.seat24.forward+local.z)*c.m.scale.z).addScaledVector(right,local.x*c.m.scale.x),q:f.q.clone(),ball:f.ball.clone()};dest[side].p.y=T.y+lift39;from[side]={...f,p:T}}
  c.seatFeet24={stage:'down',age:0,from,dest,standing:Object.fromEntries(['l','r'].map(side=>[side,{p:from[side].p.clone(),q:from[side].q.clone(),ball:from[side].ball.clone()}]))};}
  const plan=c.seatFeet24;if(plan){if(plan.stage==='hold'&&w<.999){plan.stage='up';plan.age=0;plan.from=plan.dest;plan.rootFrom39=c.root.position.clone();
  // Phase26: arrival may still have a lifted/turning leg. Return to the actual upright chair-exit frame, never that historical asymmetric approach footprint.
