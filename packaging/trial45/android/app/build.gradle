@@ -7,8 +7,8 @@ android {
         applicationId "com.hohotun.karachun3d.trial45"
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 4505
-        versionName "45.0.4-trial"
+        versionCode 4506
+        versionName "45.1.0-trial"
         testInstrumentationRunner "androidx.test.runner.AndroidJUnitRunner"
         aaptOptions {
              // Files and dirs to omit from the packaged assets dir, modified to accommodate modern web apps.

@@ -2,9 +2,9 @@
 
 Игра-симулятор больницы: строительство кабинетов, найм персонала, приём и лечение пациентов. Интерфейс на русском языке. Текущая линия разработки — трёхмерная изометрическая версия на Three.js.
 
-**Актуальная версия исходников в этом репозитории: пробная сборка 45.0.4** (`prototypes/v45_reception`).
+**Актуальная версия исходников в этом репозитории: пробная сборка 45.1.0** (`prototypes/v45_reception`).
 
-Готовые установочные файлы (Android APK и архив для Windows) лежат в [релизе v45.0.4-trial](https://github.com/vigovski8989-maker/karachun-hospital-3d/releases/tag/v45.0.4-trial). Пробные сборки ставятся поверх предыдущих пробных с тем же пакетом `com.hohotun.karachun3d.trial45` и сохраняют прогресс (ключ сохранения `hohotun_trial45_save_v1`).
+Готовые установочные файлы (Android APK и архив для Windows) лежат в [релизе v45.1.0-trial](https://github.com/vigovski8989-maker/karachun-hospital-3d/releases/tag/v45.1.0-trial). Пробные сборки ставятся поверх предыдущих пробных с тем же пакетом `com.hohotun.karachun3d.trial45` и сохраняют прогресс (ключ сохранения `hohotun_trial45_save_v1`).
 
 ## Как запустить в браузере
 
@@ -19,7 +19,7 @@ npx http-server prototypes/v45_reception -p 8090
 
 ## Как собрать Android APK
 
-Пробная обёртка Capacitor находится в `packaging/trial45/` (пакет `com.hohotun.karachun3d.trial45`, versionCode 4505, versionName `45.0.4-trial`).
+Пробная обёртка Capacitor находится в `packaging/trial45/` (пакет `com.hohotun.karachun3d.trial45`, versionCode 4506, versionName `45.1.0-trial`).
 
 Понадобятся JDK 21 и Android SDK. Путь к SDK задаётся только локально в `android/local.properties` (`sdk.dir=...`) — этот файл в репозиторий не входит.
 
@@ -48,7 +48,8 @@ APK появится в `android/app/build/outputs/apk/debug/`. Подпись d
 
 | Путь | Содержимое |
 |---|---|
-| `prototypes/v45_reception/` | Текущая игра 45.0.4: `js/`, `js3d/r3d.js`, модели, текстуры, данные уровней |
+| `prototypes/v45_reception/` | Текущая игра 45.1.0: `js/`, `js3d/r3d.js`, модели, текстуры, данные уровней |
+| `tools/interior46/` | Исходники интерьеров 45.1.0: `rooms_i46.js`, сборщик `build_furn.py` (furn.js → furn_i46.js), генераторы текстур `mktex*.py` |
 | `prototypes/v45_reception/models_build/` | Исходники персонажа в Blender (`.blend`) и связанные текстуры |
 | `prototypes/v38_game/` и `prototypes/v28_3d`…`v37_3d` | Предыдущие прототипы 3D-ветки |
 | `prototypes/v28_25d/`, `prototypes/v*_src/` | Более ранние прототипы и черновики |
